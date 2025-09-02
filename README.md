@@ -41,7 +41,11 @@ AsyncTrading212Client.close_client()
 
 ### Roadmap
 [x] All get endpoint implemented for async class - done 02/09/2025
+
 [ ] All post endpoints implemented for async class - target 10/09/2025
+
 [ ] All get endpoint implemented for sync class - target 20/09/2025
+
 [ ] All post endpoints implemented for sync class - target 30/09/2025
+
 [ ] Deploy on pypi
