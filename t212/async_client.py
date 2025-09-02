@@ -10,10 +10,8 @@ from t212.models import (
     FetchAPieResponse,
     FetchAllEquityOrdersResponse,
     PaginatedResponseHistoricalOrderResponse,
-    PaginatedResponseHistoryDividendItem,
     PaginatedResponseHistoryDividendItemResponse,
     PaginatedResponseHistoryTransactionItemResponse,
-    PositionListResponse,
     PositionResponse,
 )
 
@@ -51,6 +49,17 @@ class AsyncTrading212Client:
         url = f"{cls.base_url}/{url_suffix}"
 
         async with client.get(f"{url}", params=params, headers=cls.headers) as response:
+            response.raise_for_status()
+            return response_type.model_validate(await response.json())
+        
+    @classmethod
+    async def post(
+        cls, url_suffix: str, data: dict[str | str] | None, response_type: type[T]
+    ):
+        client = cls.init_client()
+        url = f"{cls.base_url}/{url_suffix}"
+
+        async with client.post(f"{url}", data=data, headers=cls.headers) as response:
             response.raise_for_status()
             return response_type.model_validate(await response.json())
 
@@ -95,9 +104,9 @@ class AsyncTrading212Client:
         return await cls.get(url, None, AccountResponse)
 
     @classmethod
-    async def fetch_all_open_positions(cls) -> PositionListResponse:
+    async def fetch_all_open_positions(cls) -> PositionResponse:
         url = "portfolio"
-        return await cls.get(url, None, PositionListResponse)
+        return await cls.get(url, None, PositionResponse)
 
     @classmethod
     async def fetch_open_position_by_id(cls, position_id: int) -> PositionResponse:
