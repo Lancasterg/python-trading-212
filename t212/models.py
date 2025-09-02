@@ -76,8 +76,6 @@ class DividendDetails(BaseModel):
     reinvested: Optional[float] = None
 
 
-
-
 class AccountBucketResultResponseStatus(str, Enum):
     AHEAD = "AHEAD"
     ON_TRACK = "ON_TRACK"
@@ -85,14 +83,18 @@ class AccountBucketResultResponseStatus(str, Enum):
 
 
 class AccountBucketResultResponse(BaseModel):
-    cash: Optional[float] = Field(None, description="Amount of money put into the pie in account currency")
+    cash: Optional[float] = Field(
+        None, description="Amount of money put into the pie in account currency"
+    )
     dividendDetails: Optional[DividendDetails] = None
     id: int
-    progress: Optional[float] = Field(None, description="Progress of the pie based on the set goal", example=0.5)
+    progress: Optional[float] = Field(
+        None, description="Progress of the pie based on the set goal", example=0.5
+    )
     result: Optional[InvestmentResult] = None
-    status: Optional[AccountBucketResultResponseStatus] = Field(None, description="Status of the pie based on the set goal")
-
-
+    status: Optional[AccountBucketResultResponseStatus] = Field(
+        None, description="Status of the pie based on the set goal"
+    )
 
 
 class CashResponse(BaseModel):
@@ -139,11 +141,6 @@ class Exchange(BaseModel):
     id: int
     name: Optional[str] = None
     workingSchedules: Optional[List[WorkingSchedule]] = None
-
-
-
-
-
 
 
 class HistoricalOrderExecutor(str, Enum):
@@ -220,25 +217,35 @@ class HistoricalOrder(BaseModel):
     fillPrice: Optional[float] = Field(None, description="In the instrument currency")
     fillResult: Optional[float] = None
     fillType: Optional[HistoricalOrderFillType] = None
-    filledQuantity: Optional[float] = Field(None, description="Applicable to quantity orders")
+    filledQuantity: Optional[float] = Field(
+        None, description="Applicable to quantity orders"
+    )
     filledValue: Optional[float] = Field(None, description="Applicable to value orders")
     id: int
     limitPrice: Optional[float] = Field(None, description="Applicable to limit orders")
-    orderedQuantity: Optional[float] = Field(None, description="Applicable to quantity orders")
-    orderedValue: Optional[float] = Field(None, description="Applicable to value orders")
+    orderedQuantity: Optional[float] = Field(
+        None, description="Applicable to quantity orders"
+    )
+    orderedValue: Optional[float] = Field(
+        None, description="Applicable to value orders"
+    )
     parentOrder: Optional[int] = None
     status: Optional[HistoricalOrderStatus] = None
     stopPrice: Optional[float] = Field(None, description="Applicable to stop orders")
     taxes: Optional[List[Tax]] = None
     ticker: Optional[str] = None
-    timeValidity: Optional[HistoricalOrderTimeValidity] = Field(None, description="Applicable to stop, limit and stopLimit orders")
+    timeValidity: Optional[HistoricalOrderTimeValidity] = Field(
+        None, description="Applicable to stop, limit and stopLimit orders"
+    )
     type: Optional[HistoricalOrderType] = None
 
 
 class HistoryDividendItem(BaseModel):
     amount: Optional[float] = Field(None, description="In account currency")
     amountInEuro: Optional[float] = None
-    grossAmountPerShare: Optional[float] = Field(None, description="In instrument currency")
+    grossAmountPerShare: Optional[float] = Field(
+        None, description="In instrument currency"
+    )
     paidOn: Optional[datetime] = None
     quantity: Optional[float] = None
     reference: Optional[str] = None
@@ -269,7 +276,9 @@ class LimitRequest(BaseModel):
     limitPrice: float = Field(..., example=100.23)
     quantity: float = Field(..., example=0.1)
     ticker: str = Field(..., example="AAPL_US_EQ")
-    timeValidity: LimitRequestTimeValidity = Field(..., description="Expiration", example="DAY")
+    timeValidity: LimitRequestTimeValidity = Field(
+        ..., description="Expiration", example="DAY"
+    )
 
 
 class MarketRequest(BaseModel):
@@ -305,15 +314,25 @@ class OrderType(str, Enum):
 
 class Order(BaseModel):
     creationTime: Optional[datetime] = None
-    filledQuantity: Optional[float] = Field(None, description="Applicable to quantity orders")
+    filledQuantity: Optional[float] = Field(
+        None, description="Applicable to quantity orders"
+    )
     filledValue: Optional[float] = Field(None, description="Applicable to value orders")
     id: int
-    limitPrice: Optional[float] = Field(None, description="Applicable to LIMIT and STOP_LIMIT orders")
+    limitPrice: Optional[float] = Field(
+        None, description="Applicable to LIMIT and STOP_LIMIT orders"
+    )
     quantity: Optional[float] = Field(None, description="Applicable to quantity orders")
     status: Optional[OrderStatus] = None
-    stopPrice: Optional[float] = Field(None, description="Applicable to STOP and STOP_LIMIT orders")
+    stopPrice: Optional[float] = Field(
+        None, description="Applicable to STOP and STOP_LIMIT orders"
+    )
     strategy: Optional[OrderStrategy] = None
-    ticker: Optional[str] = Field(None, description="Unique instrument identifier. Get from the /instruments endpoint", example="AAPL_US_EQ")
+    ticker: Optional[str] = Field(
+        None,
+        description="Unique instrument identifier. Get from the /instruments endpoint",
+        example="AAPL_US_EQ",
+    )
     type: Optional[OrderType] = None
     value: Optional[float] = Field(None, description="Applicable to value orders")
 
@@ -326,9 +345,13 @@ class PieRequestDividendCashAction(str, Enum):
 class PieRequest(BaseModel):
     dividendCashAction: Optional[PieRequestDividendCashAction] = None
     endDate: Optional[datetime] = None
-    goal: Optional[float] = Field(None, description="Total desired value of the pie in account currency")
+    goal: Optional[float] = Field(
+        None, description="Total desired value of the pie in account currency"
+    )
     icon: Optional[str] = None
-    instrumentShares: Optional[Dict[str, float]] = Field(None, example={"AAPL_US_EQ": 0.5, "MSFT_US_EQ": 0.5})
+    instrumentShares: Optional[Dict[str, float]] = Field(
+        None, example={"AAPL_US_EQ": 0.5, "MSFT_US_EQ": 0.5}
+    )
     name: Optional[str] = None
 
 
@@ -376,14 +399,21 @@ class Position(BaseModel):
     averagePrice: Optional[float] = None
     currentPrice: Optional[float] = None
     frontend: Optional[PositionFrontend] = Field(None, description="Origin")
-    fxPpl: Optional[float] = Field(None, description="Forex movement impact, only applies to positions with instrument currency that differs from the accounts'")
+    fxPpl: Optional[float] = Field(
+        None,
+        description="Forex movement impact, only applies to positions with instrument currency that differs from the accounts'",
+    )
     initialFillDate: Optional[datetime] = None
-    maxBuy: Optional[float] = Field(None, description="Additional quantity that can be bought")
+    maxBuy: Optional[float] = Field(
+        None, description="Additional quantity that can be bought"
+    )
     maxSell: Optional[float] = Field(None, description="Quantity that can be sold")
     pieQuantity: Optional[float] = Field(None, description="Invested in pies")
     ppl: Optional[float] = None
     quantity: Optional[float] = None
-    ticker: Optional[str] = Field(None, description="Unique instrument identifier", example="AAPL_US_EQ")
+    ticker: Optional[str] = Field(
+        None, description="Unique instrument identifier", example="AAPL_US_EQ"
+    )
 
 
 class PositionRequest(BaseModel):
@@ -431,7 +461,9 @@ class StopLimitRequest(BaseModel):
     quantity: float = Field(..., example=0.1)
     stopPrice: float = Field(..., example=100.23)
     ticker: str = Field(..., example="AAPL_US_EQ")
-    timeValidity: StopLimitRequestTimeValidity = Field(..., description="Expiration", example="DAY")
+    timeValidity: StopLimitRequestTimeValidity = Field(
+        ..., description="Expiration", example="DAY"
+    )
 
 
 class StopRequestTimeValidity(str, Enum):
@@ -443,7 +475,9 @@ class StopRequest(BaseModel):
     quantity: float = Field(..., example=0.1)
     stopPrice: float = Field(..., example=100.23)
     ticker: str = Field(..., example="AAPL_US_EQ")
-    timeValidity: StopRequestTimeValidity = Field(..., description="Expiration", example="DAY")
+    timeValidity: StopRequestTimeValidity = Field(
+        ..., description="Expiration", example="DAY"
+    )
 
 
 class TradeableInstrumentType(str, Enum):
@@ -461,14 +495,18 @@ class TradeableInstrumentType(str, Enum):
 
 class TradeableInstrument(BaseModel):
     addedOn: Optional[datetime] = Field(None, description="On the platform since")
-    currencyCode: str = Field(..., description="ISO 4217", max_length=3, min_length=3, example="USD")
+    currencyCode: str = Field(
+        ..., description="ISO 4217", max_length=3, min_length=3, example="USD"
+    )
     isin: Optional[str] = None
     maxOpenQuantity: Optional[float] = None
     name: Optional[str] = None
     shortName: Optional[str] = None
     ticker: str = Field(..., description="Unique identifier", example="AAPL_US_EQ")
     type: TradeableInstrumentType = Field(..., example="ETF")
-    workingScheduleId: Optional[int] = Field(None, description="Get items in the /exchanges endpoint")
+    workingScheduleId: Optional[int] = Field(
+        None, description="Get items in the /exchanges endpoint"
+    )
 
 
 class InstrumentListResponse(RootModel[list[TradeableInstrument]]):
@@ -482,6 +520,7 @@ class FetchAllPiesResponse(RootModel[list[AccountBucketResultResponse]]):
 class ExchangeResponse(RootModel[list[Exchange]]):
     pass
 
+
 class FetchAPieResponse(RootModel[list[AccountBucketInstrumentsDetailedResponse]]):
     pass
 
@@ -489,12 +528,15 @@ class FetchAPieResponse(RootModel[list[AccountBucketInstrumentsDetailedResponse]
 class FetchAllEquityOrdersResponse(RootModel[list[Order]]):
     pass
 
+
 class PositionResponse(RootModel[list[Position]]):
     pass
+
 
 class PaginatedResponseHistoricalOrderResponse(BaseModel):
     items: Optional[List[HistoricalOrder]] = None
     nextPagePath: Optional[str] = None
+
 
 class PaginatedResponseHistoryDividendItemResponse(BaseModel):
     items: Optional[List[HistoryDividendItem]] = None

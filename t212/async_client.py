@@ -2,8 +2,19 @@ from typing import TypeVar
 
 
 from t212.models import (
-    AccountResponse, CashResponse, ExchangeResponse, InstrumentListResponse, FetchAllPiesResponse, FetchAPieResponse, FetchAllEquityOrdersResponse, PaginatedResponseHistoricalOrderResponse, PaginatedResponseHistoryDividendItem, PositionListResponse, PositionResponse,
-
+    AccountResponse,
+    CashResponse,
+    ExchangeResponse,
+    InstrumentListResponse,
+    FetchAllPiesResponse,
+    FetchAPieResponse,
+    FetchAllEquityOrdersResponse,
+    PaginatedResponseHistoricalOrderResponse,
+    PaginatedResponseHistoryDividendItem,
+    PaginatedResponseHistoryDividendItemResponse,
+    PaginatedResponseHistoryTransactionItemResponse,
+    PositionListResponse,
+    PositionResponse,
 )
 
 import aiohttp
@@ -25,7 +36,7 @@ class AsyncTrading212Client:
                 timeout=aiohttp.client.ClientTimeout(total=10)
             )
         return cls.client
-    
+
     @classmethod
     async def close_client(cls) -> None:
         if cls.client is not None:
@@ -34,19 +45,12 @@ class AsyncTrading212Client:
 
     @classmethod
     async def get(
-            cls,
-            url_suffix: str,
-            params: dict[str | str] | None,
-            response_type: type[T]
+        cls, url_suffix: str, params: dict[str | str] | None, response_type: type[T]
     ):
         client = cls.init_client()
         url = f"{cls.base_url}/{url_suffix}"
 
-        async with client.get(
-                f"{url}",
-                params=params,
-                headers=cls.headers
-        ) as response:
+        async with client.get(f"{url}", params=params, headers=cls.headers) as response:
             response.raise_for_status()
             return response_type.model_validate(await response.json())
 
@@ -74,17 +78,17 @@ class AsyncTrading212Client:
     async def fetch_all_equity_orders(cls) -> FetchAllEquityOrdersResponse:
         url = "orders"
         return await cls.get(url, None, FetchAllEquityOrdersResponse)
-    
+
     @classmethod
     async def fetch_by_id(cls, order_id: int):
         url = f"orders/{order_id}"
         return await cls.get(url, None, FetchAllEquityOrdersResponse)
-    
+
     @classmethod
     async def fetch_account_cash(cls) -> CashResponse:
         url = "account/cash"
         return await cls.get(url, None, CashResponse)
-    
+
     @classmethod
     async def fetch_account_metadata(cls) -> AccountResponse:
         url = "account/info"
@@ -99,38 +103,36 @@ class AsyncTrading212Client:
     async def fetch_open_position_by_id(cls, position_id: int) -> PositionResponse:
         url = f"portfoloi/{position_id}"
         return await cls.get(url, None, PositionResponse)
-    
-    @classmethod 
-    async def historical_order_data(cls, cursor: int, ticker: str, limit: int = 20) -> PaginatedResponseHistoricalOrderResponse:
-        url = "history/orders"
-        params = {
-            "cursor": cursor,
-            "ticker": ticker,
-            "limit": limit
-        }
-        return await cls.get(url, params, PaginatedResponseHistoricalOrderResponse)
-    
-    @classmethod 
-    async def paid_out_dividends(cls, cursor: int, ticker: str, limit: int = 20) -> PaginatedResponseHistoryDividendItem:
-        url = "history/orders"
-        params = {
-            "cursor": cursor,
-            "ticker": ticker,
-            "limit": limit
-        }
-        return await cls.get(url, params, PaginatedResponseHistoryDividendItem)
 
-    @classmethod 
-    async def transactions_list(cls, cursor: int, ticker: str, limit: int = 20) -> PaginatedResponseHistoryDividendItem:
+    @classmethod
+    async def historical_order_data(
+        cls, cursor: int, ticker: str, limit: int = 20
+    ) -> PaginatedResponseHistoricalOrderResponse:
         url = "history/orders"
-        params = {
-            "cursor": cursor,
-            "ticker": ticker,
-            "limit": limit
-        }
-        return await cls.get(url, params, PaginatedResponseHistoryDividendItem)
+        params = {"cursor": cursor, "ticker": ticker, "limit": limit}
+        return await cls.get(url, params, PaginatedResponseHistoricalOrderResponse)
+
+    @classmethod
+    async def paid_out_dividends(
+        cls, cursor: int, ticker: str, limit: int = 20
+    ) -> PaginatedResponseHistoryDividendItemResponse:
+        url = "history/orders"
+        params = {"cursor": cursor, "ticker": ticker, "limit": limit}
+        return await cls.get(url, params, PaginatedResponseHistoryDividendItemResponse)
+
+    @classmethod
+    async def transactions_list(
+        cls, cursor: int, ticker: str, limit: int = 20
+    ) -> PaginatedResponseHistoryTransactionItemResponse:
+        url = "history/orders"
+        params = {"cursor": cursor, "ticker": ticker, "limit": limit}
+        return await cls.get(
+            url, params, PaginatedResponseHistoryTransactionItemResponse
+        )
+
 
 if __name__ == "__main__":
     import asyncio
+
     print(asyncio.run(AsyncTrading212Client.fetch_account_cash()))
     asyncio.run(AsyncTrading212Client.close_client())
