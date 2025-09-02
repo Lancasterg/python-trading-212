@@ -6,7 +6,7 @@ This project defines two clients for the Trading 212 api.
 Set the two environment variables:
 ```bash
 export export T212_API_KEY=123_YOUR_API_KEY
-export T212_ENVIRONMENT=\{live, demo\} 
+export T212_ENVIRONMENT="live" or "demo"
 ```
 
 
@@ -38,3 +38,10 @@ response.model_dump(mode="json")
 AsyncTrading212Client.close_client()
 
 ```
+
+### Roadmap
+[x] All get endpoint implemented for async class - done 02/09/2025
+[ ] All post endpoints implemented for async class - target 10/09/2025
+[ ] All get endpoint implemented for sync class - target 20/09/2025
+[ ] All post endpoints implemented for sync class - target 30/09/2025
+[ ] Deploy on pypi
