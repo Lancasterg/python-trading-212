@@ -25,13 +25,19 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install poetry
-      uses: abatilo/actions-poetry@v4
+      run: |
+        python -m pip install poetry==1.5.1
+        python -m poetry config virtualenvs.in-project true
+
+    - name: Cache the virtualenv
+      uses: actions/cache@v2
+      with:
+        path: ./.venv
+        key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+
     - name: Install dependencies
       run: |
         poetry install --with dev
-#    - name: Lint with flake8
-#      run: |
-#        mypy t212
     - name: Test with pytest
       run: |
-        pytest
+        python -m poetry run tests
