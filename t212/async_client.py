@@ -12,7 +12,7 @@ from t212.models import (
     PaginatedResponseHistoricalOrderResponse,
     PaginatedResponseHistoryDividendItemResponse,
     PaginatedResponseHistoryTransactionItemResponse,
-    PositionResponse,
+    PositionResponse, LimitRequestTimeValidity, Order,
 )
 
 import aiohttp
@@ -25,7 +25,10 @@ T = TypeVar("T")
 class AsyncTrading212Client:
     client: aiohttp.ClientSession | None = None
     base_url: str = f"https://{config.T212_ENVIRONMENT}.trading212.com/api/v0/equity"
-    headers: dict[str, str] = {"Authorization": config.T212_API_KEY}
+    headers: dict[str, str] = {
+        "Authorization": config.T212_API_KEY,
+        "Content-Type": "application/json"
+    }
 
     @classmethod
     def init_client(cls) -> aiohttp.ClientSession:
@@ -59,7 +62,7 @@ class AsyncTrading212Client:
         client = cls.init_client()
         url = f"{cls.base_url}/{url_suffix}"
 
-        async with client.post(f"{url}", data=data, headers=cls.headers) as response:
+        async with client.post(f"{url}", json=data, headers=cls.headers) as response:
             response.raise_for_status()
             return response_type.model_validate(await response.json())
 
@@ -139,9 +142,33 @@ class AsyncTrading212Client:
             url, params, PaginatedResponseHistoryTransactionItemResponse
         )
 
+    @classmethod
+    async def search_position_by_ticker(
+        cls, ticker: str,
+    ) -> PaginatedResponseHistoryTransactionItemResponse:
+        """ Returns 500 """
+        url = "portfolio/ticker"
+        params = {"ticker": ticker}
+        return await cls.post(
+            url, params, PaginatedResponseHistoryTransactionItemResponse
+        )
+
+    @classmethod
+    async def place_limit_order(cls, limit_price: float, quantity: float, ticker: str, time_validity: LimitRequestTimeValidity) -> Order:
+        """ Returns 403 forbidden """
+        url = "orders/limit"
+        json_data = {
+            "limitPrice": limit_price,
+            "quantity": quantity,
+            "ticker": ticker,
+            "timeValidity": time_validity
+        }
+        return await cls.post(url, json_data, Order)
+
+
 
 if __name__ == "__main__":
     import asyncio
 
-    print(asyncio.run(AsyncTrading212Client.fetch_account_cash()))
+    print(asyncio.run(AsyncTrading212Client.place_limit_order(0.1, 0.1, "AAPL_US_EQ", LimitRequestTimeValidity.DAY)))
     asyncio.run(AsyncTrading212Client.close_client())
