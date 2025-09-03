@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-
+from t212.exceptions import not_implemented_api_field
 from t212.models import (
     AccountResponse,
     CashResponse,
@@ -169,6 +169,61 @@ class AsyncTrading212Client:
         json_data = {
             "limitPrice": limit_price,
             "quantity": quantity,
+            "ticker": ticker,
+            "timeValidity": time_validity,
+        }
+        return await cls.post(url, json_data, Order)
+
+    @classmethod
+    @not_implemented_api_field
+    async def place_market_order(
+        cls,
+        quantity: float,
+        ticker: str,
+    ) -> Order:
+        """Returns 403 forbidden"""
+        url = "orders/market"
+        json_data = {
+            "quantity": quantity,
+            "ticker": ticker,
+        }
+        return await cls.post(url, json_data, Order)
+
+    @classmethod
+    @not_implemented_api_field
+    async def place_stop_order(
+        cls,
+        limit_price: float,
+        quantity: float,
+        ticker: str,
+        time_validity: LimitRequestTimeValidity,
+    ) -> Order:
+        """Returns 403 forbidden"""
+        url = "orders/stop"
+        json_data = {
+            "limitPrice": limit_price,
+            "quantity": quantity,
+            "ticker": ticker,
+            "timeValidity": time_validity,
+        }
+        return await cls.post(url, json_data, Order)
+
+    @classmethod
+    @not_implemented_api_field
+    async def place_stop_limit_order(
+        cls,
+        limit_price: float,
+        quantity: float,
+        stop_price: float,
+        ticker: str,
+        time_validity: LimitRequestTimeValidity,
+    ) -> Order:
+        """Returns 403 forbidden"""
+        url = "orders/stop"
+        json_data = {
+            "limitPrice": limit_price,
+            "quantity": quantity,
+            "stop_price": stop_price,
             "ticker": ticker,
             "timeValidity": time_validity,
         }
