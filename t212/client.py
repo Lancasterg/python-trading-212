@@ -1,6 +1,6 @@
 from typing import TypeVar
 
-
+from t212.exceptions import not_implemented_api_field
 from t212.models import (
     AccountResponse,
     CashResponse,
@@ -138,11 +138,10 @@ class Trading212Client:
     ) -> PaginatedResponseHistoryTransactionItemResponse:
         url = "history/orders"
         params = {"cursor": cursor, "ticker": ticker, "limit": limit}
-        return cls.get(
-            url, params, PaginatedResponseHistoryTransactionItemResponse
-        )
+        return cls.get(url, params, PaginatedResponseHistoryTransactionItemResponse)
 
     @classmethod
+    @not_implemented_api_field
     def search_position_by_ticker(
         cls,
         ticker: str,
@@ -150,11 +149,10 @@ class Trading212Client:
         """Returns 500"""
         url = "portfolio/ticker"
         params = {"ticker": ticker}
-        return cls.post(
-            url, params, PaginatedResponseHistoryTransactionItemResponse
-        )
+        return cls.post(url, params, PaginatedResponseHistoryTransactionItemResponse)
 
     @classmethod
+    @not_implemented_api_field
     def place_limit_order(
         cls,
         limit_price: float,
@@ -174,4 +172,6 @@ class Trading212Client:
 
 
 if __name__ == "__main__":
-    print(Trading212Client.exchange_list())
+    print(
+        Trading212Client.place_limit_order(1, 1, "sfsdfs", LimitRequestTimeValidity.DAY)
+    )
