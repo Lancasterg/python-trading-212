@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "t212-client"
+name = "trading-212-client"
 version = "0.1.0"
 description = ""
 authors = ["Lancasterg <lancaster0180@gmail.com>"]
