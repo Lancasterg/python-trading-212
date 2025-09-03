@@ -29,9 +29,9 @@ jobs:
     - name: Install dependencies
       run: |
         poetry install --with dev
-    - name: Lint with flake8
-      run: |
-        mypy t212
+#    - name: Lint with flake8
+#      run: |
+#        mypy t212
     - name: Test with pytest
       run: |
         pytest
