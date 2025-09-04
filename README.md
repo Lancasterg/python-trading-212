@@ -1,6 +1,3 @@
-Here’s an improved version of your README with some additional details, structure, and clarifications that will make it more useful for users:
-
-````markdown
 # python-trading-212 (WIP)
 
 A lightweight Python client for the [Trading 212 API](https://t212public-api-docs.redoc.ly/), providing both **asynchronous** and **synchronous** interfaces.
@@ -26,8 +23,6 @@ Set your Trading 212 API key and environment as environment variables:
 export T212_API_KEY=123_YOUR_API_KEY
 export T212_ENVIRONMENT=live   # or demo
 ```
-
-Alternatively, you can pass these values directly when initializing the client.
 
 ---
 
