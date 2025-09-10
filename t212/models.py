@@ -2,11 +2,13 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field, RootModel
+from pydantic import BaseModel, Field, RootModel, ConfigDict
 
 
 class AccountResponse(BaseModel):
-    currencyCode: str = Field(..., description="ISO 4217", max_length=3, min_length=3)
+    model_config = ConfigDict(populate_by_name=True)
+
+    currency_code: str = Field(..., alias="currencyCode", description="ISO 4217", max_length=3, min_length=3)
     id: int
 
 
@@ -16,16 +18,18 @@ class DividendCashAction(str, Enum):
 
 
 class AccountBucketDetailedResponse(BaseModel):
-    creationDate: datetime
-    dividendCashAction: DividendCashAction
-    endDate: Optional[datetime] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    creation_date: datetime = Field(alias="creationDate")
+    dividend_cash_action: DividendCashAction = Field(alias="dividendCashAction")
+    end_date: Optional[datetime] = Field(None, alias="endDate")
     goal: Optional[float] = None
     icon: Optional[str] = None
     id: int
-    initialInvestment: Optional[float] = None
-    instrumentShares: Optional[Dict[str, float]] = None
+    initial_investment: Optional[float] = Field(None, alias="initialInvestment")
+    instrument_shares: Optional[Dict[str, float]] = Field(None, alias="instrumentShares")
     name: Optional[str] = None
-    publicUrl: Optional[str] = None
+    public_url: Optional[str] = Field(None, alias="publicUrl")
 
 
 class InstrumentIssueName(str, Enum):
@@ -45,34 +49,44 @@ class InstrumentIssueSeverity(str, Enum):
 
 
 class InstrumentIssue(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     name: InstrumentIssueName
     severity: InstrumentIssueSeverity
 
 
 class InvestmentResult(BaseModel):
-    priceAvgInvestedValue: Optional[float] = None
-    priceAvgResult: Optional[float] = None
-    priceAvgResultCoef: Optional[float] = None
-    priceAvgValue: Optional[float] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    price_avg_invested_value: Optional[float] = Field(None, alias="priceAvgInvestedValue")
+    price_avg_result: Optional[float] = Field(None, alias="priceAvgResult")
+    price_avg_result_coef: Optional[float] = Field(None, alias="priceAvgResultCoef")
+    price_avg_value: Optional[float] = Field(None, alias="priceAvgValue")
 
 
 class AccountBucketInstrumentResult(BaseModel):
-    currentShare: Optional[float] = None
-    expectedShare: Optional[float] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    current_share: Optional[float] = Field(None, alias="currentShare")
+    expected_share: Optional[float] = Field(None, alias="expectedShare")
     issues: Optional[List[InstrumentIssue]] = None
-    ownedQuantity: Optional[float] = None
+    owned_quantity: Optional[float] = Field(None, alias="ownedQuantity")
     result: Optional[InvestmentResult] = None
     ticker: Optional[str] = None
 
 
 class AccountBucketInstrumentsDetailedResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     instruments: Optional[List[AccountBucketInstrumentResult]] = None
     settings: Optional[AccountBucketDetailedResponse] = None
 
 
 class DividendDetails(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     gained: Optional[float] = None
-    inCash: Optional[float] = None
+    in_cash: Optional[float] = Field(None, alias="inCash")
     reinvested: Optional[float] = None
 
 
@@ -83,10 +97,12 @@ class AccountBucketResultResponseStatus(str, Enum):
 
 
 class AccountBucketResultResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     cash: Optional[float] = Field(
         None, description="Amount of money put into the pie in account currency"
     )
-    dividendDetails: Optional[DividendDetails] = None
+    dividend_details: Optional[DividendDetails] = Field(None, alias="dividendDetails")
     id: int
     progress: Optional[float] = Field(
         None, description="Progress of the pie based on the set goal", example=0.5
@@ -98,22 +114,28 @@ class AccountBucketResultResponse(BaseModel):
 
 
 class CashResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     blocked: Optional[float] = None
     free: Optional[float] = None
     invested: Optional[float] = None
-    pieCash: Optional[float] = Field(None, description="Invested cash in pies")
+    pie_cash: Optional[float] = Field(None, alias="pieCash", description="Invested cash in pies")
     ppl: Optional[float] = None
     result: Optional[float] = None
     total: Optional[float] = None
 
 
 class DuplicateBucketRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     icon: Optional[str] = None
     name: Optional[str] = None
 
 
 class EnqueuedReportResponse(BaseModel):
-    reportId: int
+    model_config = ConfigDict(populate_by_name=True)
+
+    report_id: int = Field(alias="reportId")
 
 
 class TimeEventType(str, Enum):
@@ -128,19 +150,25 @@ class TimeEventType(str, Enum):
 
 
 class TimeEvent(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     date: datetime
     type: TimeEventType
 
 
 class WorkingSchedule(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     id: int
-    timeEvents: Optional[List[TimeEvent]] = None
+    time_events: Optional[List[TimeEvent]] = Field(None, alias="timeEvents")
 
 
 class Exchange(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     id: int
     name: Optional[str] = None
-    workingSchedules: Optional[List[WorkingSchedule]] = None
+    working_schedules: Optional[List[WorkingSchedule]] = Field(None, alias="workingSchedules")
 
 
 class HistoricalOrderExecutor(str, Enum):
@@ -201,52 +229,58 @@ class TaxName(str, Enum):
 
 
 class Tax(BaseModel):
-    fillId: Optional[str] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    fill_id: Optional[str] = Field(None, alias="fillId")
     name: Optional[TaxName] = None
     quantity: Optional[float] = None
-    timeCharged: Optional[datetime] = None
+    time_charged: Optional[datetime] = Field(None, alias="timeCharged")
 
 
 class HistoricalOrder(BaseModel):
-    dateCreated: Optional[datetime] = None
-    dateExecuted: Optional[datetime] = None
-    dateModified: Optional[datetime] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    date_created: Optional[datetime] = Field(None, alias="dateCreated")
+    date_executed: Optional[datetime] = Field(None, alias="dateExecuted")
+    date_modified: Optional[datetime] = Field(None, alias="dateModified")
     executor: Optional[HistoricalOrderExecutor] = None
-    fillCost: Optional[float] = Field(None, description="In the instrument currency")
-    fillId: Optional[int] = None
-    fillPrice: Optional[float] = Field(None, description="In the instrument currency")
-    fillResult: Optional[float] = None
-    fillType: Optional[HistoricalOrderFillType] = None
-    filledQuantity: Optional[float] = Field(
-        None, description="Applicable to quantity orders"
+    fill_cost: Optional[float] = Field(None, alias="fillCost", description="In the instrument currency")
+    fill_id: Optional[int] = Field(None, alias="fillId")
+    fill_price: Optional[float] = Field(None, alias="fillPrice", description="In the instrument currency")
+    fill_result: Optional[float] = Field(None, alias="fillResult")
+    fill_type: Optional[HistoricalOrderFillType] = Field(None, alias="fillType")
+    filled_quantity: Optional[float] = Field(
+        None, alias="filledQuantity", description="Applicable to quantity orders"
     )
-    filledValue: Optional[float] = Field(None, description="Applicable to value orders")
+    filled_value: Optional[float] = Field(None, alias="filledValue", description="Applicable to value orders")
     id: int
-    limitPrice: Optional[float] = Field(None, description="Applicable to limit orders")
-    orderedQuantity: Optional[float] = Field(
-        None, description="Applicable to quantity orders"
+    limit_price: Optional[float] = Field(None, alias="limitPrice", description="Applicable to limit orders")
+    ordered_quantity: Optional[float] = Field(
+        None, alias="orderedQuantity", description="Applicable to quantity orders"
     )
-    orderedValue: Optional[float] = Field(
-        None, description="Applicable to value orders"
+    ordered_value: Optional[float] = Field(
+        None, alias="orderedValue", description="Applicable to value orders"
     )
-    parentOrder: Optional[int] = None
+    parent_order: Optional[int] = Field(None, alias="parentOrder")
     status: Optional[HistoricalOrderStatus] = None
-    stopPrice: Optional[float] = Field(None, description="Applicable to stop orders")
+    stop_price: Optional[float] = Field(None, alias="stopPrice", description="Applicable to stop orders")
     taxes: Optional[List[Tax]] = None
     ticker: Optional[str] = None
-    timeValidity: Optional[HistoricalOrderTimeValidity] = Field(
-        None, description="Applicable to stop, limit and stopLimit orders"
+    time_validity: Optional[HistoricalOrderTimeValidity] = Field(
+        None, alias="timeValidity", description="Applicable to stop, limit and stopLimit orders"
     )
     type: Optional[HistoricalOrderType] = None
 
 
 class HistoryDividendItem(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     amount: Optional[float] = Field(None, description="In account currency")
-    amountInEuro: Optional[float] = None
-    grossAmountPerShare: Optional[float] = Field(
-        None, description="In instrument currency"
+    amount_in_euro: Optional[float] = Field(None, alias="amountInEuro")
+    gross_amount_per_share: Optional[float] = Field(
+        None, alias="grossAmountPerShare", description="In instrument currency"
     )
-    paidOn: Optional[datetime] = None
+    paid_on: Optional[datetime] = Field(None, alias="paidOn")
     quantity: Optional[float] = None
     reference: Optional[str] = None
     ticker: Optional[str] = None
@@ -261,8 +295,10 @@ class HistoryTransactionItemType(str, Enum):
 
 
 class HistoryTransactionItem(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     amount: Optional[float] = Field(None, description="In the account currency")
-    dateTime: Optional[datetime] = None
+    date_time: Optional[datetime] = Field(None, alias="dateTime")
     reference: Optional[str] = Field(None, description="ID")
     type: Optional[HistoryTransactionItemType] = None
 
@@ -273,15 +309,19 @@ class LimitRequestTimeValidity(str, Enum):
 
 
 class LimitRequest(BaseModel):
-    limitPrice: float = Field(..., example=100.23)
+    model_config = ConfigDict(populate_by_name=True)
+
+    limit_price: float = Field(..., alias="limitPrice", example=100.23)
     quantity: float = Field(..., example=0.1)
     ticker: str = Field(..., example="AAPL_US_EQ")
-    timeValidity: LimitRequestTimeValidity = Field(
-        ..., description="Expiration", example="DAY"
+    time_validity: LimitRequestTimeValidity = Field(
+        ..., alias="timeValidity", description="Expiration", example="DAY"
     )
 
 
 class MarketRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     quantity: float = Field(..., example=0.1)
     ticker: str = Field(..., example="AAPL_US_EQ")
 
@@ -313,19 +353,21 @@ class OrderType(str, Enum):
 
 
 class Order(BaseModel):
-    creationTime: Optional[datetime] = None
-    filledQuantity: Optional[float] = Field(
-        None, description="Applicable to quantity orders"
+    model_config = ConfigDict(populate_by_name=True)
+
+    creation_time: Optional[datetime] = Field(None, alias="creationTime")
+    filled_quantity: Optional[float] = Field(
+        None, alias="filledQuantity", description="Applicable to quantity orders"
     )
-    filledValue: Optional[float] = Field(None, description="Applicable to value orders")
+    filled_value: Optional[float] = Field(None, alias="filledValue", description="Applicable to value orders")
     id: int
-    limitPrice: Optional[float] = Field(
-        None, description="Applicable to LIMIT and STOP_LIMIT orders"
+    limit_price: Optional[float] = Field(
+        None, alias="limitPrice", description="Applicable to LIMIT and STOP_LIMIT orders"
     )
     quantity: Optional[float] = Field(None, description="Applicable to quantity orders")
     status: Optional[OrderStatus] = None
-    stopPrice: Optional[float] = Field(
-        None, description="Applicable to STOP and STOP_LIMIT orders"
+    stop_price: Optional[float] = Field(
+        None, alias="stopPrice", description="Applicable to STOP and STOP_LIMIT orders"
     )
     strategy: Optional[OrderStrategy] = None
     ticker: Optional[str] = Field(
@@ -343,14 +385,16 @@ class PieRequestDividendCashAction(str, Enum):
 
 
 class PieRequest(BaseModel):
-    dividendCashAction: Optional[PieRequestDividendCashAction] = None
-    endDate: Optional[datetime] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    dividend_cash_action: Optional[PieRequestDividendCashAction] = Field(None, alias="dividendCashAction")
+    end_date: Optional[datetime] = Field(None, alias="endDate")
     goal: Optional[float] = Field(
         None, description="Total desired value of the pie in account currency"
     )
     icon: Optional[str] = None
-    instrumentShares: Optional[Dict[str, float]] = Field(
-        None, example={"AAPL_US_EQ": 0.5, "MSFT_US_EQ": 0.5}
+    instrument_shares: Optional[Dict[str, float]] = Field(
+        None, alias="instrumentShares", example={"AAPL_US_EQ": 0.5, "MSFT_US_EQ": 0.5}
     )
     name: Optional[str] = None
 
@@ -382,6 +426,8 @@ class PlaceOrderErrorCode(str, Enum):
 
 
 class PlaceOrderError(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     clarification: Optional[str] = None
     code: Optional[PlaceOrderErrorCode] = None
 
@@ -396,19 +442,22 @@ class PositionFrontend(str, Enum):
 
 
 class Position(BaseModel):
-    averagePrice: Optional[float] = None
-    currentPrice: Optional[float] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    average_price: Optional[float] = Field(None, alias="averagePrice")
+    current_price: Optional[float] = Field(None, alias="currentPrice")
     frontend: Optional[PositionFrontend] = Field(None, description="Origin")
-    fxPpl: Optional[float] = Field(
+    fx_ppl: Optional[float] = Field(
         None,
+        alias="fxPpl",
         description="Forex movement impact, only applies to positions with instrument currency that differs from the accounts'",
     )
-    initialFillDate: Optional[datetime] = None
-    maxBuy: Optional[float] = Field(
-        None, description="Additional quantity that can be bought"
+    initial_fill_date: Optional[datetime] = Field(None, alias="initialFillDate")
+    max_buy: Optional[float] = Field(
+        None, alias="maxBuy", description="Additional quantity that can be bought"
     )
-    maxSell: Optional[float] = Field(None, description="Quantity that can be sold")
-    pieQuantity: Optional[float] = Field(None, description="Invested in pies")
+    max_sell: Optional[float] = Field(None, alias="maxSell", description="Quantity that can be sold")
+    pie_quantity: Optional[float] = Field(None, alias="pieQuantity", description="Invested in pies")
     ppl: Optional[float] = None
     quantity: Optional[float] = None
     ticker: Optional[str] = Field(
@@ -417,20 +466,26 @@ class Position(BaseModel):
 
 
 class PositionRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     ticker: Optional[str] = None
 
 
 class ReportDataIncluded(BaseModel):
-    includeDividends: Optional[bool] = None
-    includeInterest: Optional[bool] = None
-    includeOrders: Optional[bool] = None
-    includeTransactions: Optional[bool] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    include_dividends: Optional[bool] = Field(None, alias="includeDividends")
+    include_interest: Optional[bool] = Field(None, alias="includeInterest")
+    include_orders: Optional[bool] = Field(None, alias="includeOrders")
+    include_transactions: Optional[bool] = Field(None, alias="includeTransactions")
 
 
 class PublicReportRequest(BaseModel):
-    dataIncluded: Optional[ReportDataIncluded] = None
-    timeFrom: Optional[datetime] = None
-    timeTo: Optional[datetime] = None
+    model_config = ConfigDict(populate_by_name=True)
+
+    data_included: Optional[ReportDataIncluded] = Field(None, alias="dataIncluded")
+    time_from: Optional[datetime] = Field(None, alias="timeFrom")
+    time_to: Optional[datetime] = Field(None, alias="timeTo")
 
 
 class ReportResponseStatus(str, Enum):
@@ -443,12 +498,14 @@ class ReportResponseStatus(str, Enum):
 
 
 class ReportResponse(BaseModel):
-    dataIncluded: Optional[ReportDataIncluded] = None
-    downloadLink: Optional[str] = None
-    reportId: int
+    model_config = ConfigDict(populate_by_name=True)
+
+    data_included: Optional[ReportDataIncluded] = Field(None, alias="dataIncluded")
+    download_link: Optional[str] = Field(None, alias="downloadLink")
+    report_id: int = Field(alias="reportId")
     status: Optional[ReportResponseStatus] = None
-    timeFrom: Optional[datetime] = None
-    timeTo: Optional[datetime] = None
+    time_from: Optional[datetime] = Field(None, alias="timeFrom")
+    time_to: Optional[datetime] = Field(None, alias="timeTo")
 
 
 class StopLimitRequestTimeValidity(str, Enum):
@@ -457,12 +514,14 @@ class StopLimitRequestTimeValidity(str, Enum):
 
 
 class StopLimitRequest(BaseModel):
-    limitPrice: float = Field(..., example=100.23)
+    model_config = ConfigDict(populate_by_name=True)
+
+    limit_price: float = Field(..., alias="limitPrice", example=100.23)
     quantity: float = Field(..., example=0.1)
-    stopPrice: float = Field(..., example=100.23)
+    stop_price: float = Field(..., alias="stopPrice", example=100.23)
     ticker: str = Field(..., example="AAPL_US_EQ")
-    timeValidity: StopLimitRequestTimeValidity = Field(
-        ..., description="Expiration", example="DAY"
+    time_validity: StopLimitRequestTimeValidity = Field(
+        ..., alias="timeValidity", description="Expiration", example="DAY"
     )
 
 
@@ -472,11 +531,13 @@ class StopRequestTimeValidity(str, Enum):
 
 
 class StopRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     quantity: float = Field(..., example=0.1)
-    stopPrice: float = Field(..., example=100.23)
+    stop_price: float = Field(..., alias="stopPrice", example=100.23)
     ticker: str = Field(..., example="AAPL_US_EQ")
-    timeValidity: StopRequestTimeValidity = Field(
-        ..., description="Expiration", example="DAY"
+    time_validity: StopRequestTimeValidity = Field(
+        ..., alias="timeValidity", description="Expiration", example="DAY"
     )
 
 
@@ -494,18 +555,20 @@ class TradeableInstrumentType(str, Enum):
 
 
 class TradeableInstrument(BaseModel):
-    addedOn: Optional[datetime] = Field(None, description="On the platform since")
-    currencyCode: str = Field(
-        ..., description="ISO 4217", max_length=3, min_length=3, example="USD"
+    model_config = ConfigDict(populate_by_name=True)
+
+    added_on: Optional[datetime] = Field(None, alias="addedOn", description="On the platform since")
+    currency_code: str = Field(
+        ..., alias="currencyCode", description="ISO 4217", max_length=3, min_length=3, example="USD"
     )
     isin: Optional[str] = None
-    maxOpenQuantity: Optional[float] = None
+    max_open_quantity: Optional[float] = Field(None, alias="maxOpenQuantity")
     name: Optional[str] = None
-    shortName: Optional[str] = None
+    short_name: Optional[str] = Field(None, alias="shortName")
     ticker: str = Field(..., description="Unique identifier", example="AAPL_US_EQ")
     type: TradeableInstrumentType = Field(..., example="ETF")
-    workingScheduleId: Optional[int] = Field(
-        None, description="Get items in the /exchanges endpoint"
+    working_schedule_id: Optional[int] = Field(
+        None, alias="workingScheduleId", description="Get items in the /exchanges endpoint"
     )
 
 
@@ -534,15 +597,19 @@ class PositionResponse(RootModel[list[Position]]):
 
 
 class PaginatedResponseHistoricalOrderResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     items: Optional[List[HistoricalOrder]] = None
-    nextPagePath: Optional[str] = None
+    next_page_path: Optional[str] = Field(None, alias="nextPagePath")
 
 
 class PaginatedResponseHistoryDividendItemResponse(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     items: Optional[List[HistoryDividendItem]] = None
-    nextPagePath: Optional[str] = None
+    next_page_path: Optional[str] = Field(None, alias="nextPagePath")
 
 
 class PaginatedResponseHistoryTransactionItemResponse(BaseModel):
     items: Optional[List[HistoryTransactionItem]] = None
-    nextPagePath: Optional[str] = None
+    next_page_path: Optional[str] = Field(None, alias="nextPagePath")

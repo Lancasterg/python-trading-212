@@ -115,15 +115,20 @@ class AsyncTrading212Client:
 
     @classmethod
     async def fetch_open_position_by_id(cls, position_id: int) -> PositionResponse:
-        url = f"portfoloi/{position_id}"
+        url = f"portfolio/{position_id}"
         return await cls.get(url, None, PositionResponse)
 
     @classmethod
     async def historical_order_data(
-        cls, cursor: int, ticker: str, limit: int = 20
+        cls, cursor: int, ticker: str | None, limit: int = 20
     ) -> PaginatedResponseHistoricalOrderResponse:
         url = "history/orders"
-        params = {"cursor": cursor, "ticker": ticker, "limit": limit}
+        params = {
+            "cursor": cursor, 
+            "limit": limit
+            }
+        if ticker is not None:
+            params["ticker"] = ticker
         return await cls.get(url, params, PaginatedResponseHistoricalOrderResponse)
 
     @classmethod
@@ -232,12 +237,13 @@ class AsyncTrading212Client:
 
 if __name__ == "__main__":
     import asyncio
+    import json
 
-    print(
-        asyncio.run(
-            AsyncTrading212Client.place_limit_order(
-                0.1, 0.1, "AAPL_US_EQ", LimitRequestTimeValidity.DAY
-            )
+    response = asyncio.run(
+            AsyncTrading212Client.fetch_all_open_positions()
         )
-    )
+
+    response_json = response.model_dump(mode="json")
+    print(json.dumps(response_json, indent=4))
+
     asyncio.run(AsyncTrading212Client.close_client())
