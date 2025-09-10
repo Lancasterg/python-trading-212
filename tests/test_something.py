@@ -1,8 +1,9 @@
 import pytest
-from t212 import AsyncTrading212Client, Trading212Client
+from t212.config import T212_API_KEY, T212_ENVIRONMENT
 
 
 def test_something():
-    AsyncTrading212Client()
+    assert T212_API_KEY == "abcdefg12345"
+    assert T212_ENVIRONMENT == "demo"
     # Placeholder test for now
     assert True is True
