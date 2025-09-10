@@ -1,7 +1,7 @@
 .envrc
 .mypy_cache
 .idea
-
+.pytest_cache
 .vscode
 
 __pycache__
