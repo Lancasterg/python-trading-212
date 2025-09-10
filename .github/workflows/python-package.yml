@@ -37,8 +37,8 @@ jobs:
 
     - name: Install dependencies
       env:
-        T212_API_KEY: "123456789"
-        T212_ENVIRONMENT: "demo"
+        T212_API_KEY: a123456789
+        T212_ENVIRONMENT: demo
       run: |
         poetry install --with dev
     - name: Test with pytest
