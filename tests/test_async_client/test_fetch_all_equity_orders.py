@@ -1,5 +1,10 @@
-from t212.models import Order
-from t212.models import FetchAllEquityOrdersResponse
+from t212.models import (
+    Order,
+    FetchAllEquityOrdersResponse,
+    OrderStatus,
+    OrderType,
+    OrderStrategy,
+)
 import pytest
 from t212.async_client import AsyncTrading212Client
 
@@ -9,10 +14,27 @@ async def test_fetch_all_equity_orders_200(async_client_fixture: AsyncTrading212
     """
     Tests the successful (200 OK) response of the fetch_all_equity_orders method.
     """
+    # Act
     response = await async_client_fixture.fetch_all_equity_orders()
 
-    assert response == FetchAllEquityOrdersResponse(
+    # Assert
+    expected_response = FetchAllEquityOrdersResponse(
         root=[
-            Order(id=123, ticker="AAPL_US", quantity=10, type="LIMIT"),
-            Order(id=456, ticker="GOOG_US", quantity=5, type="MARKET")
-            ])
+            Order(
+                id=0,
+                status=OrderStatus.LOCAL,
+                ticker="AAPL_US_EQ",
+                type=OrderType.LIMIT,
+                quantity=0,
+                filledQuantity=0,
+                limitPrice=0,
+                stopPrice=0,
+                value=0,
+                filledValue=0,
+                strategy=OrderStrategy.QUANTITY,
+                # Note: 'creationTime' is not in the JSON, so it remains None
+                creationTime=None,
+            )
+        ]
+    )
+    assert response == expected_response
