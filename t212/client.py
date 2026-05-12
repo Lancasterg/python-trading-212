@@ -1,25 +1,17 @@
 from typing import TypeVar
 
-from t212.exceptions import not_implemented_api_field
-from t212.models import (
-    AccountResponse,
-    CashResponse,
-    ExchangeResponse,
-    InstrumentListResponse,
-    FetchAllPiesResponse,
-    FetchAPieResponse,
-    FetchAllEquityOrdersResponse,
-    PaginatedResponseHistoricalOrderResponse,
-    PaginatedResponseHistoryDividendItemResponse,
-    PaginatedResponseHistoryTransactionItemResponse,
-    PositionResponse,
-    LimitRequestTimeValidity,
-    Order,
-)
-
 import requests
 
 from t212 import config
+from t212.exceptions import not_implemented_api_field
+from t212.models import (AccountResponse, CashResponse, ExchangeResponse,
+                         FetchAllEquityOrdersResponse, FetchAllPiesResponse,
+                         FetchAPieResponse, InstrumentListResponse,
+                         LimitRequestTimeValidity, Order,
+                         PaginatedResponseHistoricalOrderResponse,
+                         PaginatedResponseHistoryDividendItemResponse,
+                         PaginatedResponseHistoryTransactionItemResponse,
+                         PositionResponse)
 
 T = TypeVar("T")
 

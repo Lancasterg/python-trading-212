@@ -1,25 +1,17 @@
 from typing import TypeVar
 
-from t212.exceptions import not_implemented_api_field
-from t212.models import (
-    AccountResponse,
-    CashResponse,
-    ExchangeResponse,
-    InstrumentListResponse,
-    FetchAllPiesResponse,
-    FetchAPieResponse,
-    FetchAllEquityOrdersResponse,
-    PaginatedResponseHistoricalOrderResponse,
-    PaginatedResponseHistoryDividendItemResponse,
-    PaginatedResponseHistoryTransactionItemResponse,
-    PositionResponse,
-    LimitRequestTimeValidity,
-    Order,
-)
-
 import aiohttp
 
 from t212 import config
+from t212.exceptions import not_implemented_api_field
+from t212.models import (AccountResponse, CashResponse, ExchangeResponse,
+                         FetchAllEquityOrdersResponse, FetchAllPiesResponse,
+                         FetchAPieResponse, InstrumentListResponse,
+                         LimitRequestTimeValidity, Order,
+                         PaginatedResponseHistoricalOrderResponse,
+                         PaginatedResponseHistoryDividendItemResponse,
+                         PaginatedResponseHistoryTransactionItemResponse,
+                         PositionResponse)
 
 T = TypeVar("T")
 
@@ -123,10 +115,7 @@ class AsyncTrading212Client:
         cls, cursor: int, ticker: str | None, limit: int = 20
     ) -> PaginatedResponseHistoricalOrderResponse:
         url = "history/orders"
-        params = {
-            "cursor": cursor, 
-            "limit": limit
-            }
+        params = {"cursor": cursor, "limit": limit}
         if ticker is not None:
             params["ticker"] = ticker
         return await cls.get(url, params, PaginatedResponseHistoricalOrderResponse)
@@ -239,9 +228,7 @@ if __name__ == "__main__":
     import asyncio
     import json
 
-    response = asyncio.run(
-            AsyncTrading212Client.fetch_all_open_positions()
-        )
+    response = asyncio.run(AsyncTrading212Client.fetch_all_open_positions())
 
     response_json = response.model_dump(mode="json")
     print(json.dumps(response_json, indent=4))

@@ -2,13 +2,15 @@ from datetime import datetime
 from enum import Enum
 from typing import Dict, List, Optional
 
-from pydantic import BaseModel, Field, RootModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, RootModel
 
 
 class AccountResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    currency_code: str = Field(..., alias="currencyCode", description="ISO 4217", max_length=3, min_length=3)
+    currency_code: str = Field(
+        ..., alias="currencyCode", description="ISO 4217", max_length=3, min_length=3
+    )
     id: int
 
 
@@ -27,7 +29,9 @@ class AccountBucketDetailedResponse(BaseModel):
     icon: Optional[str] = None
     id: int
     initial_investment: Optional[float] = Field(None, alias="initialInvestment")
-    instrument_shares: Optional[Dict[str, float]] = Field(None, alias="instrumentShares")
+    instrument_shares: Optional[Dict[str, float]] = Field(
+        None, alias="instrumentShares"
+    )
     name: Optional[str] = None
     public_url: Optional[str] = Field(None, alias="publicUrl")
 
@@ -58,7 +62,9 @@ class InstrumentIssue(BaseModel):
 class InvestmentResult(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    price_avg_invested_value: Optional[float] = Field(None, alias="priceAvgInvestedValue")
+    price_avg_invested_value: Optional[float] = Field(
+        None, alias="priceAvgInvestedValue"
+    )
     price_avg_result: Optional[float] = Field(None, alias="priceAvgResult")
     price_avg_result_coef: Optional[float] = Field(None, alias="priceAvgResultCoef")
     price_avg_value: Optional[float] = Field(None, alias="priceAvgValue")
@@ -119,7 +125,9 @@ class CashResponse(BaseModel):
     blocked: Optional[float] = None
     free: Optional[float] = None
     invested: Optional[float] = None
-    pie_cash: Optional[float] = Field(None, alias="pieCash", description="Invested cash in pies")
+    pie_cash: Optional[float] = Field(
+        None, alias="pieCash", description="Invested cash in pies"
+    )
     ppl: Optional[float] = None
     result: Optional[float] = None
     total: Optional[float] = None
@@ -168,7 +176,9 @@ class Exchange(BaseModel):
 
     id: int
     name: Optional[str] = None
-    working_schedules: Optional[List[WorkingSchedule]] = Field(None, alias="workingSchedules")
+    working_schedules: Optional[List[WorkingSchedule]] = Field(
+        None, alias="workingSchedules"
+    )
 
 
 class HistoricalOrderExecutor(str, Enum):
@@ -244,17 +254,25 @@ class HistoricalOrder(BaseModel):
     date_executed: Optional[datetime] = Field(None, alias="dateExecuted")
     date_modified: Optional[datetime] = Field(None, alias="dateModified")
     executor: Optional[HistoricalOrderExecutor] = None
-    fill_cost: Optional[float] = Field(None, alias="fillCost", description="In the instrument currency")
+    fill_cost: Optional[float] = Field(
+        None, alias="fillCost", description="In the instrument currency"
+    )
     fill_id: Optional[int] = Field(None, alias="fillId")
-    fill_price: Optional[float] = Field(None, alias="fillPrice", description="In the instrument currency")
+    fill_price: Optional[float] = Field(
+        None, alias="fillPrice", description="In the instrument currency"
+    )
     fill_result: Optional[float] = Field(None, alias="fillResult")
     fill_type: Optional[HistoricalOrderFillType] = Field(None, alias="fillType")
     filled_quantity: Optional[float] = Field(
         None, alias="filledQuantity", description="Applicable to quantity orders"
     )
-    filled_value: Optional[float] = Field(None, alias="filledValue", description="Applicable to value orders")
+    filled_value: Optional[float] = Field(
+        None, alias="filledValue", description="Applicable to value orders"
+    )
     id: int
-    limit_price: Optional[float] = Field(None, alias="limitPrice", description="Applicable to limit orders")
+    limit_price: Optional[float] = Field(
+        None, alias="limitPrice", description="Applicable to limit orders"
+    )
     ordered_quantity: Optional[float] = Field(
         None, alias="orderedQuantity", description="Applicable to quantity orders"
     )
@@ -263,11 +281,15 @@ class HistoricalOrder(BaseModel):
     )
     parent_order: Optional[int] = Field(None, alias="parentOrder")
     status: Optional[HistoricalOrderStatus] = None
-    stop_price: Optional[float] = Field(None, alias="stopPrice", description="Applicable to stop orders")
+    stop_price: Optional[float] = Field(
+        None, alias="stopPrice", description="Applicable to stop orders"
+    )
     taxes: Optional[List[Tax]] = None
     ticker: Optional[str] = None
     time_validity: Optional[HistoricalOrderTimeValidity] = Field(
-        None, alias="timeValidity", description="Applicable to stop, limit and stopLimit orders"
+        None,
+        alias="timeValidity",
+        description="Applicable to stop, limit and stopLimit orders",
     )
     type: Optional[HistoricalOrderType] = None
 
@@ -359,10 +381,14 @@ class Order(BaseModel):
     filled_quantity: Optional[float] = Field(
         None, alias="filledQuantity", description="Applicable to quantity orders"
     )
-    filled_value: Optional[float] = Field(None, alias="filledValue", description="Applicable to value orders")
+    filled_value: Optional[float] = Field(
+        None, alias="filledValue", description="Applicable to value orders"
+    )
     id: int
     limit_price: Optional[float] = Field(
-        None, alias="limitPrice", description="Applicable to LIMIT and STOP_LIMIT orders"
+        None,
+        alias="limitPrice",
+        description="Applicable to LIMIT and STOP_LIMIT orders",
     )
     quantity: Optional[float] = Field(None, description="Applicable to quantity orders")
     status: Optional[OrderStatus] = None
@@ -387,7 +413,9 @@ class PieRequestDividendCashAction(str, Enum):
 class PieRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    dividend_cash_action: Optional[PieRequestDividendCashAction] = Field(None, alias="dividendCashAction")
+    dividend_cash_action: Optional[PieRequestDividendCashAction] = Field(
+        None, alias="dividendCashAction"
+    )
     end_date: Optional[datetime] = Field(None, alias="endDate")
     goal: Optional[float] = Field(
         None, description="Total desired value of the pie in account currency"
@@ -456,8 +484,12 @@ class Position(BaseModel):
     max_buy: Optional[float] = Field(
         None, alias="maxBuy", description="Additional quantity that can be bought"
     )
-    max_sell: Optional[float] = Field(None, alias="maxSell", description="Quantity that can be sold")
-    pie_quantity: Optional[float] = Field(None, alias="pieQuantity", description="Invested in pies")
+    max_sell: Optional[float] = Field(
+        None, alias="maxSell", description="Quantity that can be sold"
+    )
+    pie_quantity: Optional[float] = Field(
+        None, alias="pieQuantity", description="Invested in pies"
+    )
     ppl: Optional[float] = None
     quantity: Optional[float] = None
     ticker: Optional[str] = Field(
@@ -557,9 +589,16 @@ class TradeableInstrumentType(str, Enum):
 class TradeableInstrument(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
-    added_on: Optional[datetime] = Field(None, alias="addedOn", description="On the platform since")
+    added_on: Optional[datetime] = Field(
+        None, alias="addedOn", description="On the platform since"
+    )
     currency_code: str = Field(
-        ..., alias="currencyCode", description="ISO 4217", max_length=3, min_length=3, example="USD"
+        ...,
+        alias="currencyCode",
+        description="ISO 4217",
+        max_length=3,
+        min_length=3,
+        example="USD",
     )
     isin: Optional[str] = None
     max_open_quantity: Optional[float] = Field(None, alias="maxOpenQuantity")
@@ -568,7 +607,9 @@ class TradeableInstrument(BaseModel):
     ticker: str = Field(..., description="Unique identifier", example="AAPL_US_EQ")
     type: TradeableInstrumentType = Field(..., example="ETF")
     working_schedule_id: Optional[int] = Field(
-        None, alias="workingScheduleId", description="Get items in the /exchanges endpoint"
+        None,
+        alias="workingScheduleId",
+        description="Get items in the /exchanges endpoint",
     )
 
 

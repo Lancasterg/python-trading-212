@@ -39,14 +39,11 @@ jobs:
       with:
         version: "0.11.6"
 
-    - name: Set up Python
-      run: uv python install
-
     - name: Cache the virtualenv
       uses: actions/cache@v3
       with:
         path: ./.venv
-        key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+        key: ${{ runner.os }}-venv-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}
 
     - name: Install dependencies
       env:
