@@ -3,6 +3,7 @@
 .idea
 .pytest_cache
 .vscode
+.venv
 
 __pycache__
 __pycache__/*

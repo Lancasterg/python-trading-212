@@ -1,0 +1,5 @@
+services:
+  t212_mock_server:
+    build: ./t212_mock_server
+    ports:
+      - "8080:8080"
