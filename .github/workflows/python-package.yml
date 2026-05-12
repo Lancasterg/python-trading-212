@@ -25,14 +25,13 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-
-    - name: Build wiremock image
-      run: |
-        docker build -t t212-mock-server ./t212_mock_server
+    # - name: Build wiremock image
+    #   run: |
+    #     docker build -t t212-mock-server ./t212_mock_server
 
     - name: Run wiremock container
       run: |
-        docker run -d t212-mock-server
+        docker-compose up t212_mock_server --force-recreate --build -d
 
     - name: Install uv
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
