@@ -31,7 +31,7 @@ jobs:
 
     - name: Run wiremock container
       run: |
-        docker-compose up t212_mock_server --force-recreate --build -d
+        docker compose up t212_mock_server --force-recreate --build -d
 
     - name: Install uv
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
