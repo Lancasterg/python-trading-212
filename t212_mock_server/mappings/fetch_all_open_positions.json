@@ -1,0 +1,35 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/portfolio"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+  {
+    "averagePricePaid": 0,
+    "createdAt": "2019-08-24T14:15:22Z",
+    "currentPrice": 0,
+    "instrument": {
+      "currency": "string",
+      "isin": "string",
+      "name": "string",
+      "ticker": "AAPL_US_EQ"
+    },
+    "quantity": 0,
+    "quantityAvailableForTrading": 0,
+    "quantityInPies": 0,
+    "walletImpact": {
+      "currency": "string",
+      "currentValue": 0,
+      "fxImpact": 0,
+      "totalCost": 0,
+      "unrealizedProfitLoss": 0
+    }
+  }
+]
+  }
+}

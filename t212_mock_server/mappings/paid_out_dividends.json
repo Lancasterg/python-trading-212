@@ -1,0 +1,84 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/dividends",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "0"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "items": [
+            {
+              "amount": 0,
+              "amountInEuro": 0,
+              "currency": "string",
+              "grossAmountPerShare": 0,
+              "instrument": {
+                "currency": "string",
+                "isin": "string",
+                "name": "string",
+                "ticker": "AAPL_US_EQ"
+              },
+              "paidOn": "2019-08-24T14:15:22Z",
+              "quantity": 0,
+              "reference": "string",
+              "ticker": "string",
+              "tickerCurrency": "string",
+              "type": "ORDINARY"
+            }
+          ],
+          "nextPagePath": "string"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/dividends",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "400"
+          }
+        }
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Bad Request"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/dividends",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "500"
+          }
+        }
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Internal Server Error"
+        }
+      }
+    }
+  ]
+}

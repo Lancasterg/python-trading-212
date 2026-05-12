@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/account/cash"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "free": 1000.0,
+      "total": 1500.0,
+      "locked": 500.0
+    }
+  }
+}

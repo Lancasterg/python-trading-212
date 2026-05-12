@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/account/info"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": 12345,
+      "currencyCode": "GBP",
+      "accountType": "ISA"
+    }
+  }
+}

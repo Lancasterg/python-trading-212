@@ -1,0 +1,71 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "url": "/orders/123"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "createdAt": "2019-08-24T14:15:22Z",
+          "currency": "string",
+          "extendedHours": true,
+          "filledQuantity": 0,
+          "filledValue": 0,
+          "id": 0,
+          "initiatedFrom": "API",
+          "instrument": {
+            "currency": "string",
+            "isin": "string",
+            "name": "string",
+            "ticker": "AAPL_US_EQ"
+          },
+          "limitPrice": 0,
+          "quantity": 0,
+          "side": "BUY",
+          "status": "LOCAL",
+          "stopPrice": 0,
+          "strategy": "QUANTITY",
+          "ticker": "AAPL_US_EQ",
+          "timeInForce": "DAY",
+          "type": "LIMIT",
+          "value": 0
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/orders/400"
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Bad Request"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "url": "/orders/500"
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Internal Server Error"
+        }
+      }
+    }
+  ]
+}
