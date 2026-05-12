@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
     - uses: actions/checkout@v4
@@ -28,11 +28,11 @@ jobs:
 
     - name: Build wiremock image
       run: |
-        docker build -t t212-mock-server:cicd ./t212_mock_server
+        docker build -t t212-mock-server ./t212_mock_server
 
     - name: Run wiremock container
       run: |
-        docker run -d t212-mock-server:cicd
+        docker run -d t212-mock-server
 
     - name: Install uv
       uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
@@ -54,4 +54,5 @@ jobs:
 
     - name: Test with pytest
       run: |
+        docker ps
         uv run python -m pytest tests

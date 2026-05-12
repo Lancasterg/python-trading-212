@@ -14,5 +14,5 @@ async def async_client_fixture():
     # Point the client to the mock server
     test_client.base_url = "http://localhost:8080"
     yield test_client
-    # Teardown: close the client session
+    # Teardown
     await test_client.close_client()
