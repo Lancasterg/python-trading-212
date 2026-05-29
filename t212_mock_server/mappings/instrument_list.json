@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/metadata/instruments"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+      {
+        "ticker": "AAPL_US",
+        "type": "STOCK",
+        "name": "Apple",
+        "exchange": "NASDAQ",
+        "currency": "USD"
+      },
+      {
+        "ticker": "GOOG_US",
+        "type": "STOCK",
+        "name": "Alphabet",
+        "exchange": "NASDAQ",
+        "currency": "USD"
+      }
+    ]
+  }
+}

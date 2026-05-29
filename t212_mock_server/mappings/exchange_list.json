@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/metadata/exchanges"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+        {
+          "id": 1,
+          "name": "LSE",
+          "workingSchedules": []
+        },
+        {
+          "id": 2,
+          "name": "NYSE",
+          "workingSchedules": []
+        }
+      ]
+  }
+}

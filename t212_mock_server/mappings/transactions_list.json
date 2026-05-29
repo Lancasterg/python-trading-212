@@ -1,0 +1,71 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/transactions",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "0"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "items": [
+            {
+              "id": "t1",
+              "type": "DEPOSIT",
+              "amount": 1000.0
+            }
+          ],
+          "nextPagePath": "/api/v0/equity/history/transactions?cursor=1"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/transactions",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "400"
+          }
+        }
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Bad Request"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/transactions",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "500"
+          }
+        }
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Internal Server Error"
+        }
+      }
+    }
+  ]
+}

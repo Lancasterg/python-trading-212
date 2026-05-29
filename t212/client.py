@@ -1,25 +1,29 @@
-from typing import TypeVar
-
-from t212.exceptions import not_implemented_api_field
-from t212.models import (
-    AccountResponse,
-    CashResponse,
-    ExchangeResponse,
-    InstrumentListResponse,
-    FetchAllPiesResponse,
-    FetchAPieResponse,
-    FetchAllEquityOrdersResponse,
-    PaginatedResponseHistoricalOrderResponse,
-    PaginatedResponseHistoryDividendItemResponse,
-    PaginatedResponseHistoryTransactionItemResponse,
-    PositionResponse,
-    LimitRequestTimeValidity,
-    Order,
-)
+from typing import TypeVar, List
 
 import requests
 
 from t212 import config
+from t212.exceptions import not_implemented_api_field
+from t212.models import (
+    AccountSummary,
+    ExchangeResponse,
+    FetchAllEquityOrdersResponse,
+    FetchAllPiesResponse,
+    FetchAPieResponse,
+    InstrumentListResponse,
+    LimitRequestTimeValidity,
+    Order,
+    PaginatedResponseHistoricalOrderResponse,
+    PaginatedResponseHistoryDividendItemResponse,
+    PaginatedResponseHistoryTransactionItemResponse,
+    PositionResponse,
+    PieRequest,
+    AccountBucketDetailedResponse,
+    DuplicateBucketRequest,
+    PublicReportRequest,
+    ReportResponse,
+    EnqueuedReportResponse,
+)
 
 T = TypeVar("T")
 
@@ -92,43 +96,115 @@ class Trading212Client:
         return cls.get(url, None, FetchAllEquityOrdersResponse)
 
     @classmethod
-    def fetch_by_id(cls, order_id: int):
+    def fetch_by_id(cls, order_id: int) -> Order:
         url = f"orders/{order_id}"
-        return cls.get(url, None, FetchAllEquityOrdersResponse)
+        return cls.get(url, None, Order)
 
     @classmethod
-    def fetch_account_cash(cls) -> CashResponse:
-        url = "account/cash"
-        return cls.get(url, None, CashResponse)
+    def fetch_account_summary(cls) -> AccountSummary:
+        url = "account/summary"
+        return cls.get(url, None, AccountSummary)
 
     @classmethod
-    def fetch_account_metadata(cls) -> AccountResponse:
-        url = "account/info"
-        return cls.get(url, None, AccountResponse)
+    def fetch_all_open_positions(cls, ticker: str | None = None) -> PositionResponse:
+        url = "positions"
+        params = {}
+        if ticker is not None:
+            params["ticker"] = ticker
+        return cls.get(url, params, PositionResponse)
 
     @classmethod
-    def fetch_all_open_positions(cls) -> PositionResponse:
-        url = "portfolio"
-        return cls.get(url, None, PositionResponse)
+    def search_position_by_ticker(
+        cls,
+        ticker: str,
+    ) -> PositionResponse:
+        url = "positions"
+        params = {"ticker": ticker}
+        return cls.get(url, params, PositionResponse)
 
     @classmethod
-    def fetch_open_position_by_id(cls, position_id: int) -> PositionResponse:
-        url = f"portfoloi/{position_id}"
-        return cls.get(url, None, PositionResponse)
+    def cancel_order(cls, order_id: int) -> None:
+        client = cls.init_client()
+        url = f"{cls.base_url}/orders/{order_id}"
+        with client.delete(url, headers=cls.headers) as response:
+            response.raise_for_status()
+
+    @classmethod
+    def create_pie(cls, pie_request: PieRequest) -> AccountBucketDetailedResponse:
+        url = "pies"
+        return cls.post(
+            url,
+            pie_request.model_dump(mode="json", exclude_none=True),
+            AccountBucketDetailedResponse,
+        )
+
+    @classmethod
+    def delete_pie(cls, pie_id: int) -> None:
+        client = cls.init_client()
+        url = f"{cls.base_url}/pies/{pie_id}"
+        with client.delete(url, headers=cls.headers) as response:
+            response.raise_for_status()
+
+    @classmethod
+    def update_pie(
+        cls, pie_id: int, pie_request: PieRequest
+    ) -> AccountBucketDetailedResponse:
+        client = cls.init_client()
+        url = f"{cls.base_url}/pies/{pie_id}"
+        with client.put(
+            url,
+            json=pie_request.model_dump(mode="json", exclude_none=True),
+            headers=cls.headers,
+        ) as response:
+            response.raise_for_status()
+            return AccountBucketDetailedResponse.model_validate(response.json())
+
+    @classmethod
+    def duplicate_pie(
+        cls, pie_id: int, duplicate_request: DuplicateBucketRequest
+    ) -> AccountBucketDetailedResponse:
+        url = f"pies/{pie_id}/duplicate"
+        return cls.post(
+            url,
+            duplicate_request.model_dump(mode="json", exclude_none=True),
+            AccountBucketDetailedResponse,
+        )
+
+    @classmethod
+    def list_generated_reports(cls) -> List[ReportResponse]:
+        client = cls.init_client()
+        url = f"{cls.base_url}/history/exports"
+        with client.get(url, headers=cls.headers) as response:
+            response.raise_for_status()
+            items = response.json()
+            return [ReportResponse.model_validate(item) for item in items]
+
+    @classmethod
+    def request_csv_report(
+        cls, public_report_request: PublicReportRequest
+    ) -> EnqueuedReportResponse:
+        url = "history/exports"
+        return cls.post(
+            url,
+            public_report_request.model_dump(mode="json", exclude_none=True),
+            EnqueuedReportResponse,
+        )
 
     @classmethod
     def historical_order_data(
-        cls, cursor: int, ticker: str, limit: int = 20
+        cls, cursor: int, ticker: str | None, limit: int = 20
     ) -> PaginatedResponseHistoricalOrderResponse:
         url = "history/orders"
-        params = {"cursor": cursor, "ticker": ticker, "limit": limit}
+        params = {"cursor": cursor, "limit": limit}
+        if ticker is not None:
+            params["ticker"] = ticker
         return cls.get(url, params, PaginatedResponseHistoricalOrderResponse)
 
     @classmethod
     def paid_out_dividends(
         cls, cursor: int, ticker: str, limit: int = 20
     ) -> PaginatedResponseHistoryDividendItemResponse:
-        url = "history/orders"
+        url = "history/dividends"
         params = {"cursor": cursor, "ticker": ticker, "limit": limit}
         return cls.get(url, params, PaginatedResponseHistoryDividendItemResponse)
 
@@ -136,23 +212,11 @@ class Trading212Client:
     def transactions_list(
         cls, cursor: int, ticker: str, limit: int = 20
     ) -> PaginatedResponseHistoryTransactionItemResponse:
-        url = "history/orders"
+        url = "history/transactions"
         params = {"cursor": cursor, "ticker": ticker, "limit": limit}
         return cls.get(url, params, PaginatedResponseHistoryTransactionItemResponse)
 
     @classmethod
-    @not_implemented_api_field
-    def search_position_by_ticker(
-        cls,
-        ticker: str,
-    ) -> PaginatedResponseHistoryTransactionItemResponse:
-        """Returns 500"""
-        url = "portfolio/ticker"
-        params = {"ticker": ticker}
-        return cls.post(url, params, PaginatedResponseHistoryTransactionItemResponse)
-
-    @classmethod
-    @not_implemented_api_field
     def place_limit_order(
         cls,
         limit_price: float,
@@ -215,11 +279,11 @@ class Trading212Client:
         time_validity: LimitRequestTimeValidity,
     ) -> Order:
         """Returns 403 forbidden"""
-        url = "orders/stop"
+        url = "orders/stop_limit"
         json_data = {
             "limitPrice": limit_price,
             "quantity": quantity,
-            "stop_price": stop_price,
+            "stopPrice": stop_price,
             "ticker": ticker,
             "timeValidity": time_validity,
         }

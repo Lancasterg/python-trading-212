@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
 
     steps:
     - uses: actions/checkout@v4
@@ -24,23 +24,34 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install poetry
+
+    # - name: Build wiremock image
+    #   run: |
+    #     docker build -t t212-mock-server ./t212_mock_server
+
+    - name: Run wiremock container
       run: |
-        python -m pip install poetry==1.5.1
-        python -m poetry config virtualenvs.in-project true
+        docker compose up t212_mock_server --force-recreate --build -d
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+      with:
+        version: "0.11.6"
 
     - name: Cache the virtualenv
       uses: actions/cache@v3
       with:
         path: ./.venv
-        key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
+        key: ${{ runner.os }}-venv-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}
 
     - name: Install dependencies
       env:
         T212_API_KEY: a123456789
         T212_ENVIRONMENT: demo
       run: |
-        poetry install --with dev
+        uv sync --group dev
+
     - name: Test with pytest
       run: |
-        python -m poetry run python -m pytest tests
+        docker ps
+        uv run python -m pytest tests

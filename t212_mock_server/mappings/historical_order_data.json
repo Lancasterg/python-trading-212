@@ -1,0 +1,118 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/orders",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "0"
+          },
+          "ticker": {
+            "equalTo": "GOOG"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "items": [
+            {
+              "fill": {
+                "filledAt": "2019-08-24T14:15:22Z",
+                "id": 0,
+                "price": 0,
+                "quantity": 0,
+                "tradingMethod": "TOTV",
+                "type": "TRADE",
+                "walletImpact": {
+                  "currency": "string",
+                  "fxRate": 0,
+                  "netValue": 0,
+                  "realisedProfitLoss": 0,
+                  "taxes": [
+                    {
+                      "chargedAt": "2019-08-24T14:15:22Z",
+                      "currency": "string",
+                      "name": "COMMISSION_TURNOVER",
+                      "quantity": 0
+                    }
+                  ]
+                }
+              },
+              "order": {
+                "createdAt": "2019-08-24T14:15:22Z",
+                "currency": "string",
+                "extendedHours": true,
+                "filledQuantity": 0,
+                "filledValue": 0,
+                "id": 0,
+                "initiatedFrom": "API",
+                "instrument": {
+                  "currency": "string",
+                  "isin": "string",
+                  "name": "string",
+                  "ticker": "AAPL_US_EQ"
+                },
+                "limitPrice": 0,
+                "quantity": 0,
+                "side": "BUY",
+                "status": "LOCAL",
+                "stopPrice": 0,
+                "strategy": "QUANTITY",
+                "ticker": "AAPL_US_EQ",
+                "timeInForce": "DAY",
+                "type": "LIMIT",
+                "value": 0
+              }
+            }
+          ],
+          "nextPagePath": "string"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/orders",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "400"
+          }
+        }
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Bad Request"
+        }
+      }
+    },
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/history/orders",
+        "queryParameters": {
+          "cursor": {
+            "equalTo": "500"
+          }
+        }
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Internal Server Error"
+        }
+      }
+    }
+  ]
+}

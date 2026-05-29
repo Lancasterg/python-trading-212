@@ -1,0 +1,15 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/history/exports"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "reportId": 123
+    }
+  }
+}
