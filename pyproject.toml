@@ -1,6 +1,6 @@
 [project]
 name = "trading-212-client"
-version = "0.1.4"
+version = "0.2.0"
 description = ""
 authors = [{ name = "Lancasterg", email = "lancaster0180@gmail.com" }]
 requires-python = ">=3.11,<3.14"
