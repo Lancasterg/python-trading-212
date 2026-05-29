@@ -1,0 +1,37 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/orders/stop"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "createdAt": "2019-08-24T14:15:22Z",
+      "currency": "USD",
+      "extendedHours": false,
+      "filledQuantity": 0,
+      "filledValue": 0,
+      "id": 103,
+      "initiatedFrom": "API",
+      "instrument": {
+        "currency": "USD",
+        "isin": "string",
+        "name": "string",
+        "ticker": "AAPL_US_EQ"
+      },
+      "limitPrice": 0.0,
+      "quantity": 10.0,
+      "side": "BUY",
+      "status": "LOCAL",
+      "stopPrice": 100.23,
+      "strategy": "QUANTITY",
+      "ticker": "AAPL_US_EQ",
+      "timeInForce": "DAY",
+      "type": "STOP",
+      "value": 1002.3
+    }
+  }
+}

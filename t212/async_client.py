@@ -23,6 +23,12 @@ from t212.models import (
     PublicReportRequest,
     ReportResponse,
     EnqueuedReportResponse,
+    LimitRequest,
+    MarketRequest,
+    StopRequest,
+    StopLimitRequest,
+    StopRequestTimeValidity,
+    StopLimitRequestTimeValidity,
 )
 
 T = TypeVar("T")
@@ -99,6 +105,58 @@ class AsyncTrading212Client:
             return response_type.model_validate(await response.json())
 
     @classmethod
+    async def put(
+        cls,
+        url_suffix: str,
+        data: dict[str, str | float | int | bool | None] | None,
+        response_type: type[T],
+    ) -> T:
+        """
+        Generic PUT request to the Trading212 API. Used by the client for all PUT requests
+        to ensure consistent error handling and response validation.
+
+        Args:
+            url_suffix (str): The endpoint suffix to append to the base URL.
+            data (dict[str, str | float | int | bool | None] | None): JSON body data for the request.
+            response_type (type[T]): The Pydantic model class to validate the response against.
+
+        Returns:
+            T: An instance of the specified response_type.
+
+        """
+        client = cls.init_client()
+        url = f"{cls.base_url}/{url_suffix}"
+
+        async with client.put(f"{url}", json=data, headers=cls.headers) as response:
+            response.raise_for_status()
+            return response_type.model_validate(await response.json())
+
+    @classmethod
+    async def delete(
+        cls, url_suffix: str, response_type: type[T] | None = None
+    ) -> T | None:
+        """
+        Generic DELETE request to the Trading212 API. Used by the client for all DELETE requests
+        to ensure consistent error handling and response validation.
+
+        Args:
+            url_suffix (str): The endpoint suffix to append to the base URL.
+            response_type (type[T] | None): The Pydantic model class to validate the response against.
+
+        Returns:
+            T | None: An instance of the specified response_type if provided, else None.
+
+        """
+        client = cls.init_client()
+        url = f"{cls.base_url}/{url_suffix}"
+
+        async with client.delete(f"{url}", headers=cls.headers) as response:
+            response.raise_for_status()
+            if response_type is not None:
+                return response_type.model_validate(await response.json())
+            return None
+
+    @classmethod
     async def exchange_list(cls) -> ExchangeResponse:
         url = "metadata/exchanges"
         return await cls.get(url, None, ExchangeResponse)
@@ -154,10 +212,11 @@ class AsyncTrading212Client:
 
     @classmethod
     async def cancel_order(cls, order_id: int) -> None:
-        client = cls.init_client()
-        url = f"{cls.base_url}/orders/{order_id}"
-        async with client.delete(url, headers=cls.headers) as response:
-            response.raise_for_status()
+        await cls.delete(f"orders/{order_id}")
+
+    @classmethod
+    async def cancel_pending_order(cls, order_id: int) -> None:
+        await cls.delete(f"orders/{order_id}")
 
     @classmethod
     async def create_pie(cls, pie_request: PieRequest) -> AccountBucketDetailedResponse:
@@ -170,24 +229,18 @@ class AsyncTrading212Client:
 
     @classmethod
     async def delete_pie(cls, pie_id: int) -> None:
-        client = cls.init_client()
-        url = f"{cls.base_url}/pies/{pie_id}"
-        async with client.delete(url, headers=cls.headers) as response:
-            response.raise_for_status()
+        await cls.delete(f"pies/{pie_id}")
 
     @classmethod
     async def update_pie(
         cls, pie_id: int, pie_request: PieRequest
     ) -> AccountBucketDetailedResponse:
-        client = cls.init_client()
-        url = f"{cls.base_url}/pies/{pie_id}"
-        async with client.put(
+        url = f"pies/{pie_id}"
+        return await cls.put(
             url,
-            json=pie_request.model_dump(mode="json", exclude_none=True),
-            headers=cls.headers,
-        ) as response:
-            response.raise_for_status()
-            return AccountBucketDetailedResponse.model_validate(await response.json())
+            pie_request.model_dump(mode="json", exclude_none=True),
+            AccountBucketDetailedResponse,
+        )
 
     @classmethod
     async def duplicate_pie(
@@ -256,70 +309,71 @@ class AsyncTrading212Client:
         ticker: str,
         time_validity: LimitRequestTimeValidity,
     ) -> Order:
-        """Returns 403 forbidden"""
         url = "orders/limit"
-        json_data = {
-            "limitPrice": limit_price,
-            "quantity": quantity,
-            "ticker": ticker,
-            "timeValidity": time_validity,
-        }
-        return await cls.post(url, json_data, Order)
+        req = LimitRequest(
+            limitPrice=limit_price,
+            quantity=quantity,
+            ticker=ticker,
+            timeValidity=time_validity,
+        )
+        return await cls.post(
+            url, req.model_dump(mode="json", exclude_none=True), Order
+        )
 
     @classmethod
-    @not_implemented_api_field
     async def place_market_order(
         cls,
         quantity: float,
         ticker: str,
     ) -> Order:
-        """Returns 403 forbidden"""
         url = "orders/market"
-        json_data = {
-            "quantity": quantity,
-            "ticker": ticker,
-        }
-        return await cls.post(url, json_data, Order)
+        req = MarketRequest(
+            quantity=quantity,
+            ticker=ticker,
+        )
+        return await cls.post(
+            url, req.model_dump(mode="json", exclude_none=True), Order
+        )
 
     @classmethod
-    @not_implemented_api_field
     async def place_stop_order(
         cls,
-        limit_price: float,
         quantity: float,
+        stop_price: float,
         ticker: str,
-        time_validity: LimitRequestTimeValidity,
+        time_validity: StopRequestTimeValidity,
     ) -> Order:
-        """Returns 403 forbidden"""
         url = "orders/stop"
-        json_data = {
-            "limitPrice": limit_price,
-            "quantity": quantity,
-            "ticker": ticker,
-            "timeValidity": time_validity,
-        }
-        return await cls.post(url, json_data, Order)
+        req = StopRequest(
+            quantity=quantity,
+            stopPrice=stop_price,
+            ticker=ticker,
+            timeValidity=time_validity,
+        )
+        return await cls.post(
+            url, req.model_dump(mode="json", exclude_none=True), Order
+        )
 
     @classmethod
-    @not_implemented_api_field
     async def place_stop_limit_order(
         cls,
         limit_price: float,
         quantity: float,
         stop_price: float,
         ticker: str,
-        time_validity: LimitRequestTimeValidity,
+        time_validity: StopLimitRequestTimeValidity,
     ) -> Order:
-        """Returns 403 forbidden"""
         url = "orders/stop_limit"
-        json_data = {
-            "limitPrice": limit_price,
-            "quantity": quantity,
-            "stopPrice": stop_price,
-            "ticker": ticker,
-            "timeValidity": time_validity,
-        }
-        return await cls.post(url, json_data, Order)
+        req = StopLimitRequest(
+            limitPrice=limit_price,
+            quantity=quantity,
+            stopPrice=stop_price,
+            ticker=ticker,
+            timeValidity=time_validity,
+        )
+        return await cls.post(
+            url, req.model_dump(mode="json", exclude_none=True), Order
+        )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,37 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/orders/limit"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "createdAt": "2019-08-24T14:15:22Z",
+      "currency": "USD",
+      "extendedHours": true,
+      "filledQuantity": 0,
+      "filledValue": 0,
+      "id": 101,
+      "initiatedFrom": "API",
+      "instrument": {
+        "currency": "USD",
+        "isin": "string",
+        "name": "string",
+        "ticker": "AAPL_US_EQ"
+      },
+      "limitPrice": 100.23,
+      "quantity": 10.0,
+      "side": "BUY",
+      "status": "LOCAL",
+      "stopPrice": 0.0,
+      "strategy": "QUANTITY",
+      "ticker": "AAPL_US_EQ",
+      "timeInForce": "DAY",
+      "type": "LIMIT",
+      "value": 1002.3
+    }
+  }
+}
