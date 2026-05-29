@@ -1,0 +1,28 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/account/summary"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": 12345,
+      "currency": "GBP",
+      "totalValue": 1500.0,
+      "cash": {
+        "availableToTrade": 1000.0,
+        "inPies": 0.0,
+        "reservedForOrders": 500.0
+      },
+      "investments": {
+        "currentValue": 500.0,
+        "realisedProfitLoss": 50.0,
+        "totalCost": 400.0,
+        "unrealizedProfitLoss": 100.0
+      }
+    }
+  }
+}

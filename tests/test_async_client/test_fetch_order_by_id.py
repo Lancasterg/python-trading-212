@@ -11,7 +11,7 @@ async def test_fetch_by_id_200(async_client_fixture: AsyncTrading212Client):
     response = await async_client_fixture.fetch_by_id(order_id=123)
 
     assert response is not None
-    assert response.id == "123"
+    assert response.id == 0
 
 
 @pytest.mark.asyncio

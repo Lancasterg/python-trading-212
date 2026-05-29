@@ -12,7 +12,7 @@ async def test_paid_out_dividends_200(async_client_fixture: AsyncTrading212Clien
 
     assert response is not None
     assert len(response.items) == 1
-    assert response.items[0].id == "d1"
+    assert response.items[0].reference == "string"
 
 
 @pytest.mark.asyncio

@@ -12,7 +12,7 @@ async def test_transactions_list_200(async_client_fixture: AsyncTrading212Client
 
     assert response is not None
     assert len(response.items) == 1
-    assert response.items[0].id == "t1"
+    assert response.items[0].reference == "t1"
 
 
 @pytest.mark.asyncio

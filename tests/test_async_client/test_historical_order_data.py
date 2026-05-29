@@ -12,7 +12,8 @@ async def test_historical_order_data_200(async_client_fixture: AsyncTrading212Cl
 
     assert response is not None
     assert len(response.items) == 1
-    assert response.items[0].id == 1
+    assert response.items[0].order is not None
+    assert response.items[0].order.id == 0
 
 
 @pytest.mark.asyncio

@@ -6,5 +6,7 @@
 .venv
 .ruff_cache
 
+dev_tools/
+
 __pycache__
 __pycache__/*

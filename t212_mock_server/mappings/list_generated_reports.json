@@ -1,0 +1,27 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/history/exports"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": [
+      {
+        "reportId": 123,
+        "downloadLink": "http://example.com/csv",
+        "status": "Finished",
+        "timeFrom": "2019-08-24T14:15:22Z",
+        "timeTo": "2019-08-24T14:15:22Z",
+        "dataIncluded": {
+          "includeDividends": true,
+          "includeInterest": false,
+          "includeOrders": true,
+          "includeTransactions": false
+        }
+      }
+    ]
+  }
+}

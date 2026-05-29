@@ -1,7 +1,7 @@
 {
   "request": {
-    "method": "GET",
-    "url": "/account/cash"
+    "method": "POST",
+    "url": "/history/exports"
   },
   "response": {
     "status": 200,
@@ -9,9 +9,7 @@
       "Content-Type": "application/json"
     },
     "jsonBody": {
-      "free": 1000.0,
-      "total": 1500.0,
-      "locked": 500.0
+      "reportId": 123
     }
   }
 }

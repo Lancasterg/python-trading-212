@@ -11,5 +11,5 @@ async def test_instrument_list_200(async_client_fixture: AsyncTrading212Client):
 
     assert response is not None
     # Add assertions based on the actual model structure
-    assert len(response) == 2
-    assert response[0].name == "Apple"
+    assert len(response.root) == 2
+    assert response.root[0].name == "Apple"

@@ -1,17 +1,29 @@
-from typing import TypeVar
+from typing import TypeVar, List
 
 import aiohttp
 
 from t212 import config
 from t212.exceptions import not_implemented_api_field
-from t212.models import (AccountResponse, CashResponse, ExchangeResponse,
-                         FetchAllEquityOrdersResponse, FetchAllPiesResponse,
-                         FetchAPieResponse, InstrumentListResponse,
-                         LimitRequestTimeValidity, Order,
-                         PaginatedResponseHistoricalOrderResponse,
-                         PaginatedResponseHistoryDividendItemResponse,
-                         PaginatedResponseHistoryTransactionItemResponse,
-                         PositionResponse)
+from t212.models import (
+    AccountSummary,
+    ExchangeResponse,
+    FetchAllEquityOrdersResponse,
+    FetchAllPiesResponse,
+    FetchAPieResponse,
+    InstrumentListResponse,
+    LimitRequestTimeValidity,
+    Order,
+    PaginatedResponseHistoricalOrderResponse,
+    PaginatedResponseHistoryDividendItemResponse,
+    PaginatedResponseHistoryTransactionItemResponse,
+    PositionResponse,
+    PieRequest,
+    AccountBucketDetailedResponse,
+    DuplicateBucketRequest,
+    PublicReportRequest,
+    ReportResponse,
+    EnqueuedReportResponse,
+)
 
 T = TypeVar("T")
 
@@ -42,6 +54,19 @@ class AsyncTrading212Client:
     async def get(
         cls, url_suffix: str, params: dict[str | str] | None, response_type: type[T]
     ):
+        """
+        Generic GET request to the Trading212 API. Used by the client for all GET requests
+        to ensure consistent error handling and response validation.
+
+        Args:
+            url_suffix (str): The endpoint suffix to append to the base URL.
+            params (dict[str | str] | None): Query parameters for the request.
+            response_type (type[T]): The Pydantic model class to validate the response against.
+
+        Returns:
+            T: An instance of the specified response_type.
+
+        """
         client = cls.init_client()
         url = f"{cls.base_url}/{url_suffix}"
 
@@ -53,6 +78,19 @@ class AsyncTrading212Client:
     async def post(
         cls, url_suffix: str, data: dict[str | str] | None, response_type: type[T]
     ):
+        """
+        Generic POST request to the Trading212 API. Used by the client for all POST requests
+        to ensure consistent error handling and response validation.
+
+        Args:
+            url_suffix (str): The endpoint suffix to append to the base URL.
+            data (dict[str | str] | None): JSON body data for the request.
+            response_type (type[T]): The Pydantic model class to validate the response against.
+
+        Returns:
+            T: An instance of the specified response_type.
+
+        """
         client = cls.init_client()
         url = f"{cls.base_url}/{url_suffix}"
 
@@ -86,29 +124,101 @@ class AsyncTrading212Client:
         return await cls.get(url, None, FetchAllEquityOrdersResponse)
 
     @classmethod
-    async def fetch_by_id(cls, order_id: int):
+    async def fetch_by_id(cls, order_id: int) -> Order:
         url = f"orders/{order_id}"
-        return await cls.get(url, None, FetchAllEquityOrdersResponse)
+        return await cls.get(url, None, Order)
 
     @classmethod
-    async def fetch_account_cash(cls) -> CashResponse:
-        url = "account/cash"
-        return await cls.get(url, None, CashResponse)
+    async def fetch_account_summary(cls) -> AccountSummary:
+        url = "account/summary"
+        return await cls.get(url, None, AccountSummary)
 
     @classmethod
-    async def fetch_account_metadata(cls) -> AccountResponse:
-        url = "account/info"
-        return await cls.get(url, None, AccountResponse)
+    async def fetch_all_open_positions(
+        cls, ticker: str | None = None
+    ) -> PositionResponse:
+        url = "positions"
+        params = {}
+        if ticker is not None:
+            params["ticker"] = ticker
+        return await cls.get(url, params, PositionResponse)
 
     @classmethod
-    async def fetch_all_open_positions(cls) -> PositionResponse:
-        url = "portfolio"
-        return await cls.get(url, None, PositionResponse)
+    async def search_position_by_ticker(
+        cls,
+        ticker: str,
+    ) -> PositionResponse:
+        url = "positions"
+        params = {"ticker": ticker}
+        return await cls.get(url, params, PositionResponse)
 
     @classmethod
-    async def fetch_open_position_by_id(cls, position_id: int) -> PositionResponse:
-        url = f"portfolio/{position_id}"
-        return await cls.get(url, None, PositionResponse)
+    async def cancel_order(cls, order_id: int) -> None:
+        client = cls.init_client()
+        url = f"{cls.base_url}/orders/{order_id}"
+        async with client.delete(url, headers=cls.headers) as response:
+            response.raise_for_status()
+
+    @classmethod
+    async def create_pie(cls, pie_request: PieRequest) -> AccountBucketDetailedResponse:
+        url = "pies"
+        return await cls.post(
+            url,
+            pie_request.model_dump(mode="json", exclude_none=True),
+            AccountBucketDetailedResponse,
+        )
+
+    @classmethod
+    async def delete_pie(cls, pie_id: int) -> None:
+        client = cls.init_client()
+        url = f"{cls.base_url}/pies/{pie_id}"
+        async with client.delete(url, headers=cls.headers) as response:
+            response.raise_for_status()
+
+    @classmethod
+    async def update_pie(
+        cls, pie_id: int, pie_request: PieRequest
+    ) -> AccountBucketDetailedResponse:
+        client = cls.init_client()
+        url = f"{cls.base_url}/pies/{pie_id}"
+        async with client.put(
+            url,
+            json=pie_request.model_dump(mode="json", exclude_none=True),
+            headers=cls.headers,
+        ) as response:
+            response.raise_for_status()
+            return AccountBucketDetailedResponse.model_validate(await response.json())
+
+    @classmethod
+    async def duplicate_pie(
+        cls, pie_id: int, duplicate_request: DuplicateBucketRequest
+    ) -> AccountBucketDetailedResponse:
+        url = f"pies/{pie_id}/duplicate"
+        return await cls.post(
+            url,
+            duplicate_request.model_dump(mode="json", exclude_none=True),
+            AccountBucketDetailedResponse,
+        )
+
+    @classmethod
+    async def list_generated_reports(cls) -> List[ReportResponse]:
+        client = cls.init_client()
+        url = f"{cls.base_url}/history/exports"
+        async with client.get(url, headers=cls.headers) as response:
+            response.raise_for_status()
+            items = await response.json()
+            return [ReportResponse.model_validate(item) for item in items]
+
+    @classmethod
+    async def request_csv_report(
+        cls, public_report_request: PublicReportRequest
+    ) -> EnqueuedReportResponse:
+        url = "history/exports"
+        return await cls.post(
+            url,
+            public_report_request.model_dump(mode="json", exclude_none=True),
+            EnqueuedReportResponse,
+        )
 
     @classmethod
     async def historical_order_data(
@@ -124,7 +234,7 @@ class AsyncTrading212Client:
     async def paid_out_dividends(
         cls, cursor: int, ticker: str, limit: int = 20
     ) -> PaginatedResponseHistoryDividendItemResponse:
-        url = "history/orders"
+        url = "history/dividends"
         params = {"cursor": cursor, "ticker": ticker, "limit": limit}
         return await cls.get(url, params, PaginatedResponseHistoryDividendItemResponse)
 
@@ -132,21 +242,9 @@ class AsyncTrading212Client:
     async def transactions_list(
         cls, cursor: int, ticker: str, limit: int = 20
     ) -> PaginatedResponseHistoryTransactionItemResponse:
-        url = "history/orders"
+        url = "history/transactions"
         params = {"cursor": cursor, "ticker": ticker, "limit": limit}
         return await cls.get(
-            url, params, PaginatedResponseHistoryTransactionItemResponse
-        )
-
-    @classmethod
-    async def search_position_by_ticker(
-        cls,
-        ticker: str,
-    ) -> PaginatedResponseHistoryTransactionItemResponse:
-        """Returns 500"""
-        url = "portfolio/ticker"
-        params = {"ticker": ticker}
-        return await cls.post(
             url, params, PaginatedResponseHistoryTransactionItemResponse
         )
 
@@ -213,11 +311,11 @@ class AsyncTrading212Client:
         time_validity: LimitRequestTimeValidity,
     ) -> Order:
         """Returns 403 forbidden"""
-        url = "orders/stop"
+        url = "orders/stop_limit"
         json_data = {
             "limitPrice": limit_price,
             "quantity": quantity,
-            "stop_price": stop_price,
+            "stopPrice": stop_price,
             "ticker": ticker,
             "timeValidity": time_validity,
         }

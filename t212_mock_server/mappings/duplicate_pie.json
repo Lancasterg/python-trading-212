@@ -1,0 +1,18 @@
+{
+  "request": {
+    "method": "POST",
+    "urlPattern": "/pies/\\d+/duplicate"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "creationDate": "2019-08-24T14:15:22Z",
+      "dividendCashAction": "REINVEST",
+      "id": 2,
+      "name": "My Duplicated Pie"
+    }
+  }
+}

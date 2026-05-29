@@ -18,23 +18,33 @@ async def test_fetch_all_equity_orders_200(async_client_fixture: AsyncTrading212
     response = await async_client_fixture.fetch_all_equity_orders()
 
     # Assert
-    expected_response = FetchAllEquityOrdersResponse(
-        root=[
-            Order(
-                id=0,
-                status=OrderStatus.LOCAL,
-                ticker="AAPL_US_EQ",
-                type=OrderType.LIMIT,
-                quantity=0,
-                filledQuantity=0,
-                limitPrice=0,
-                stopPrice=0,
-                value=0,
-                filledValue=0,
-                strategy=OrderStrategy.QUANTITY,
-                # Note: 'creationTime' is not in the JSON, so it remains None
-                creationTime=None,
-            )
+    expected_response = FetchAllEquityOrdersResponse.model_validate(
+        [
+            {
+                "createdAt": "2019-08-24T14:15:22Z",
+                "currency": "string",
+                "extendedHours": True,
+                "filledQuantity": 0,
+                "filledValue": 0,
+                "id": 0,
+                "initiatedFrom": "API",
+                "instrument": {
+                    "currency": "string",
+                    "isin": "string",
+                    "name": "string",
+                    "ticker": "AAPL_US_EQ",
+                },
+                "limitPrice": 0,
+                "quantity": 0,
+                "side": "BUY",
+                "status": "LOCAL",
+                "stopPrice": 0,
+                "strategy": "QUANTITY",
+                "ticker": "AAPL_US_EQ",
+                "timeInForce": "DAY",
+                "type": "LIMIT",
+                "value": 0,
+            }
         ]
     )
     assert response == expected_response
